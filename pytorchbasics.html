@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PyTorch basics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Megrim&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- -- -->
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="/path/to/styles/default.css" />
+    <script src="/path/to/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@200&display=swap"
+      rel="stylesheet"
+    />
+    <!-- ----- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet">
+    <!-- --- -->
+  </head>
+
+  <div class="navbar" id="mytopnav">
+    <div class="navcontainer">
+      &nbsp&nbsp
+      <div class="bars">
+        <a
+          href="javascript:void(0);"
+          class="icon"
+          onclick="myFunction(); cross();"
+        >
+          <div class="line1" id="line1"></div>
+          <div class="line2" id="line2"></div>
+          <div class="line3" id="line3"></div
+        ></a>
+      </div>
+      &nbsp&nbsp
+      <div class="element1"><a href="index.html" class="home"><b>ML</b>harbour</a></div>
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <div class="element2"><a href="" class="a1">Learn</a></div>
+      &nbsp&nbsp
+      <div class="element3"><a href="" class="a2">Blog</a></div>
+      &nbsp&nbsp
+      <div class="element4"><a href="" class="a3">Resources</a></div>
+      &nbsp&nbsp
+      <div class="element5"><a href="" class="a4">About</a></div>
+      &nbsp&nbsp
+      <div class="element6"><a href="" class="a5">Contact</a></div>
+      <!-- <div class="engine">
+      <script async src="https://cse.google.com/cse.js?cx=38c22d203e37ec2d0"></script>
+      <div class="gcse-search"></div></div> -->
+    </div>
+  </div>
+  <body>
+    <div class="container1">
+      <h1 class="head1">TENSORS</h1>
+      <p class="para1">
+        Tensors are the foundations of Machine Learning. Tensors are just like
+        Arrays (Collections of objects in rows and columns is called an array).
+        Tensors can be of the form n...nxn, n being number of dimensions. We
+        mostly use tensors with more than 2 dimensions for representing Data.
+        All of the data we deal with, is going to be converted into numbers, be
+        it an image or a name. The only difference between Tensors and Arrays is
+        that Tensors can run (be processed) on GPU or a TPU. Tensors are
+        optimized for the GPU or TPU. So when dealing with large tensor
+        multiplications or even loading data, tensor-optimized Hardware makes
+        things a lot faster.
+      </p>
+      <br />
+      <h2 class="head2">DATASETS</h2>
+      <p class="para2">
+        Datasets are the learning material of a Neural Network. Assume we are
+        performing an Image-classification task to classify different breed of
+        dogs, First we need to tell the neural network What a Pitbull looks
+        like? What a Corgi looks like? and so on. The neural network will find
+        similar patterns in the data in order to perform the required task. The
+        varse the dataset is, the better the Neural Network performs.<br />
+        The three types of datasets in Machine Learning are: <br /><br />
+        1. <b>Training Data</b> : The data on which a Neural Network trains on
+        and finds similar patterns in the data to learn. <br />
+        2. <b>Testing Data</b>: The data unseen by the neural network on which
+        we test the performance (Accuracy/loss) of the Neural Network to
+        optimize the hyperparameters of the model accordingly. <br />
+        3. <b>Validation Data</b>: The data on which we evaluate the final
+        real-world performance of our neural network.
+      </p>
+      <br />
+      <h2 class="head3">Building your first Machine Learning model</h2>
+      <p class="para3">
+        Consider an array x containing integers [1, 2, 3, 4, 5] and y being [9,
+        10, 11, 12, 13]. x and y have a difference of 8 between each element.
+        What we are going to do is to train our neural network on x and y, find
+        the patterns between them and use the learned pattern on our own data
+        which is unseen by the neural network. You will find the Source code
+        here:
+      </p>
+      <br />
+      <center>
+        <a
+          href="https://colab.research.google.com/drive/1O_8zOXHHx4B655fwpGKkivv7qBdGKArA?usp=sharing"
+          target="_blank"
+        >
+          <img
+            class="img1"
+            src="https://colab.research.google.com/assets/colab-badge.svg"
+            alt="Open In Colab"
+            height="35px"
+          />
+        </a>
+      </center>
+      <br />
+      <p class="para4">
+        First we import the PyTorch module, "torch" and define the tensors x and
+        y. <br />
+        torch.tensor converts data directly into tensors, by just writing
+        torch.tensor([data]). x and y are two-dimensional tensors containing the
+        elements 1, 2, 3, 4, 5 and 9, 10 ,11, 12, 13. The first step while
+        building a Machine Learning model is getting your data and converting
+        your data and converting it into tensors.
+      </p>
+      <br />
+      <pre><code class="language-python" id="code">
+import torch
+x = torch.tensor([[1], [2], [3], [4], [5]])
+y = torch.tensor([[9], [10], [11], [12], [13]])
+</code></pre>
+      <br />
+      <p class="para5">
+        w stands for weight and b stands for bias here. In simple words, weights
+        and biases are just like a hit trial method for the neural network, it
+        changes the weights and biases until it gets close to the right value.
+        For example, suppose the equation 1 + x = 7, the value of x here
+        represents weights and bias here, the neural network will adjust the
+        value of x to make the value of left hand side = value of right hand
+        side. It just guesses the value of x in steps and calculate the
+        difference betweeen the LHS and RHS at each step and change the value of
+        x closer to the actual value as it should be (6) to match it with the
+        RHS. It computes the loss between the LHS and RHS and adjust the weights
+        automatically without our interference.
+      </p>
+      <br />
+      <pre><code class="language-python" id="code">
+w = torch.tensor(5)  #initialising with random weight and bias
+b = torch.tensor(5)
+print(w)
+print(b) 
+</code></pre>
+      <pre><code class="language-plaintext" id="code">
+Output:     tensor(5)
+            tensor(5)
+              
+</code></pre>
+      <p class="para6">
+        The Algorithm we are using here to find the relation between x and y is
+        called Linear Regression. the equation of linear of linear equation is
+        of the form : <br />
+        prediction = x * weights + Biases More about Linear Regression is
+        explained further in this tutorial.
+      </p>
+      <br />
+      <pre><code class="language-python" id="code">
+pred = x * w + b
+print("Predicted no. is:", pred)
+print("Actual no. is:", y)             
+</code></pre>
+      <pre><code class="language-plaintext" id="code">
+Output:     Predicted no. is: tensor([[10],
+            [15],
+            [20],
+            [25],
+            [30]])
+            Actual no. is: tensor([[ 9],
+            [10],
+            [11],
+            [12],
+            [13]])             
+</code></pre>
+      <br />
+      <p class="para7">
+        Calculating loss: To adjust the weights and biases, we need to calculate
+        the difference between the predicted value(s) and the expected original
+        value(s). <br />
+        The type of Loss we would be using here is MSE (Mean Squared Error).
+        <br />
+        MSE = (Predicted - Actual) <sup>2</sup> / Number of elements in the
+        tensor
+      </p>
+      <br />
+      <pre><code class="language-python" id="code">
+def mse(prediction, actual):
+    loss = prediction - actual
+    return torch.sum(loss * loss)/ loss.numel()             
+print("loss is:", mse(pred, y))     
+</code></pre>
+      <pre><code class="language-python" id="code">
+</code></pre>
+      <pre><code class="language-plaintext" id="code">
+Output:     loss is: tensor(113.)             
+</code></pre>
+      <br />
+      <p class="para8">
+        <b class="subhead1"
+          >Calculating the Gradient / defining our neural network</b
+        >
+        <br /><br />
+        <b>[1]</b> Gradient stores the change in the weights and biases.
+        Epoch(s) is the number of sttempts we give to the Neural Network to look
+        at the Training Data and identify similar pattern in training data.
+        Epochs can be ranging from 1 to n, n being the number of times you want
+        your Neural Network to learn, but the number of epochs is not fixed and
+        it has a limit too, if your Model (Neural Network) trains too much, it
+        would not be able to perform well on the data it has never seen before
+        because it has over-learnt the patterns in the training data. This is
+        known as overfitting, which affects the performance of your model.
+        <br /><b>[2]</b> Randomising the weights and biases, could have been
+        zero too. requires_grad = True means that the following specified with
+        it requires gradient. PyTorch will automatically keep track of the
+        gradients while training the model and update the weights and biases
+        automatically. <br /><b>[3]</b> lr stands for learning rate, the rate at
+        which the weights and biases of the neural network update at every
+        epoch. Best learning rate can be only foudn by hit and trial, it is not
+        fixed. Usually a learning rate of around 0.001 is optimal for any neural
+        network. a lr of 0.001 means that the weights and biases would be
+        added/subtracted by a maximum of (0.001 * gradient) at every epoch.
+        <br /><b>[4]</b> Creating the training loop for 1000 epochs <br /><b
+          >[5]</b
+        >
+        Calculating the predicted output (should be equal to nearly y) using the
+        linear regression eqn: &nbsp y = x * w + b <br />where we can use x and
+        y inplace of each other, when either x is fixed to calculate the value
+        of y or y is fixed to calculate the value of x. Just like a linear
+        equation, where one of x and y becomes dependent ont the other. <br />In
+        our case we calculate the value of y [[1], [2], [3], [4], [5]] which is
+        dependent on the value of x, keeping the value of x fixed. The values of
+        weights and biases are decided by the neural network. This algorithm is
+        called Linear Regression. <br /><b>[6]</b> Calculating the loss at each
+        step <br /><b>[7]</b> loss.backward() computes (calculates) the gradient
+        of all the tensors we label we with requires_grad = True <br /><b
+          >[8]</b
+        >
+        Now we turn off Gradient calculation to calculate the update weights and
+        biases as we do not require them again in the same epoch and it saves
+        memory. <br /><b>[9]</b> Now we update the weights and bias according to
+        the learning rate (0.05), multiplying each of them by 0.05. <br /><b
+          >[10]</b
+        >
+        Now we reset the gradient to zero as we do not want to accumulate(store)
+        the gradients at every epoch, we dont need to store it as we already
+        calculated the weights and bias at each epoch, it helps in saving memory
+        too. <br /><b>[11]</b> Printing the value of loss and the predicted
+        value at every epoch, the Training loop repeats itself for 1000 epochs.
+      </p>
+      <br />
+      <pre><code class="language-python" id="code">
+epochs = 1000                                               #[1]
+lr = 0.05                                                   #[2]       
+w = torch.tensor(5., requires_grad = True)                  #[3]
+b = torch.tensor(5., requires_grad=True)                    #[3]
+for i in range (epochs):                                    #[4]
+  pred = x * w + b                                          #[5]
+  loss = mse(pred, y)                                       #[6]
+  loss.backward()                                           #[7]
+  with torch.no_grad():                                     #[8]
+    w-= w.grad * lr                                         #[9]
+    b-= b.grad * lr                                         #[9]    
+    w.grad.zero_()                                          #[10]
+    b.grad.zero_()                                          #[10]
+  print(f"Epoch {i}/{epochs}: Loss: {loss} pred: {pred}")   #[11]
+</code></pre>
+<pre><code class="language-plaintext" id="code">
+Output:     Epoch: 999/1000 
+            Loss: 2.5102054115877515e-11 
+            pred: 
+            tensor([[ 9.0000],
+            [10.0000],
+            [11.0000],
+            [12.0000],
+            [13.0000]], 
+            grad_fn= AddBackward0 )           
+</code></pre>
+      <br />
+      <pre><code class="language-python" id="code">
+y         
+</code></pre>
+      <pre><code class="language-plaintext" id="code">
+Output:     tensor([[ 9],
+            [10],
+            [11],
+            [12],
+            [13]])             
+</code></pre>
+      <br />
+      <pre><code class="language-python" id="code">
+pred         
+</code></pre>
+      <pre><code class="language-plaintext" id="code">
+Output:     tensor([[ 9.0000],
+            [10.0000],
+            [11.0000],
+            [12.0000],
+            [13.0000]], 
+            grad_fn= AddBackward0 )             
+</code></pre>
+      <br />
+      <p class="para9">
+        Now we check the value of w and b to find out that our model actually
+        figured out the pattern between x and y (difference of 8). All on its
+        own.
+      </p>
+      <pre><code class="language-python" id="code">
+print("Weight:", w)
+print("Bias:", b)
+</code></pre>
+      <pre><code class="language-plaintext" id="code">
+Output:     Weight: tensor(1.0000, 
+            requires_grad=True)
+            Bias: tensor(8.0000, 
+            requires_grad=True)          
+</code></pre>
+      <br />
+      <p class="para10">
+        Now we create a function to use the trained model to find the next batch
+        of similar data we want.
+      </p>
+      <br />
+      <pre><code class="language-python" id="code">
+def usethetrainedmodel(input):
+  preds = input * w + b
+  return preds        
+</code></pre>
+      <br />
+      <pre><code class="language-python" id="code">
+#Now we use the trained model on UNSEEN DATA for finding the next batch of numbers for the same pattern between x and y.
+input1 = torch.tensor([[91], [92], [93], [94], [95]])         
+usethetrainedmodel(input1)
+</code></pre>
+<pre><code class="language-plaintext" id="code">
+Output:     tensor([[ 99.0003],
+            [100.0003],
+            [101.0003],
+            [102.0003],
+            [103.0003]], 
+            grad_fn= AddBackward0 ) 
+</code></pre>
+
+      <p class="para11">
+        That's it, our model has actually figured out the right pattern without
+        our interference !!! Linear regression is one of the most used ML
+        Algorithms, like when calculating what dosage of a medicine should a
+        patient take according to their Blood test values. Now we know how to
+        build a linear regression model. This neural network was quite simple
+        and powerful at the same, lets expand this Neural Network but in a
+        different approach.
+      </p>
+      <br />
+      <br>
+      <div class="nextcontainer">
+        <div class="next" onclick="location.href='pytorch.html';">
+          << Back&nbsp
+        </div> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <div class="next" onclick="location.href='pytorchlinearregression.html';">
+          &nbspNext >>
+        </div>
+      </div>
+      <br>
+
+      <!-- <pre><code class="language-python" id="code">
+              
+</code></pre>
+    <pre><code class="language-python" id="code">
+              
+</code></pre>
+    <pre><code class="language-python" id="code">
+              
+</code></pre> -->
+    </div>
+
+    <style>
+      * {
+        margin: 0px;
+      }
+      .navcontainer .icon {
+        display: none;
+      }
+      @media screen and (max-width: 700px) {
+        /* .navbar :not(:first-child) {
+            display: none;
+          } */
+          .navcontainer .element1{
+        font-size: 8vw;
+      }
+        .navcontainer .element2 {
+          display: none;
+        }
+        .navcontainer .element3 {
+          display: none;
+        }
+        .navcontainer .element4 {
+          display: none;
+        }
+        .navcontainer .element5 {
+          display: none;
+        }
+        .navcontainer .element6 {
+          display: none;
+        }
+        .navcontainer .icon {
+          float: none;
+          display: block;
+          text-align: left;
+        }
+      }
+      @media screen and (max-width: 700px) {
+        /* .navbar.responsive a.icon {
+            position: absolute;
+            right: 0;
+            top: 0;
+          } */
+        .navbar.responsive {
+          position: fixed;
+          height: 150vh;
+          /* box-shadow: none; */
+        }
+        .navbar.responsive a {
+          float: none;
+          display: inline-block;
+          /* text-align: left; */
+        }
+        .navbar.responsive .element2 {
+          margin-left: 5px;
+          font-size: 3vh;
+          float: none;
+          display: block;
+          text-align: left;
+        }
+        .navbar.responsive .element3 {
+          margin-left: 5px;
+          font-size: 3vh;
+          float: none;
+          display: block;
+          text-align: left;
+        }
+        .navbar.responsive .element4 {
+          margin-left: 5px;
+          font-size: 3vh;
+          float: none;
+          display: block;
+          text-align: left;
+        }
+        .navbar.responsive .element5 {
+          margin-left: 5px;
+          font-size: 3vh;
+          float: none;
+          display: block;
+          text-align: left;
+        }
+        .navbar.responsive .element6 {
+          margin-left: 5px;
+          font-size: 3vh;
+          float: none;
+          display: block;
+          text-align: left;
+        }
+      }
+      .navbar {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0%;
+        display: block;
+        background-color: purple;
+        color: white;
+        width: 100vw;
+        box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+          rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+          rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+        /* position: fixed; */
+        /* height: 10vh; */
+      }
+      .navcontainer {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0%;
+        background-color: purple;
+        width: 100vw;
+        /* position: fixed; */
+        /* height: 10vh; */
+        /* box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+            rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+            rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px; */
+        /* filter: drop-shadow(5px 0px 0px  rgb(95, 42, 42)); */
+      }
+      .element1 {
+        position: relative;
+        display: inline-block;
+        /* line-height: 6vh; */
+        vertical-align: middle;
+        font-family: "Megrim", cursive;
+        font-size: 5.2vw;
+        /* position: fixed; */
+        /* margin-top: 1vh; */
+        /* width: 20vw; */
+        /* margin-left: 7vh; */
+      }
+      .element2 {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 2vw;
+        font-family: "Quicksand", sans-serif;
+        /* position: fixed; */
+        /* line-height: 10vh; */
+      }
+      .element3 {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 2vw;
+        font-family: "Quicksand", sans-serif;
+        /* position: fixed; */
+        /* line-height: 10vh; */
+      }
+      .element4 {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 2vw;
+        font-family: "Quicksand", sans-serif;
+        /* position: fixed; */
+        /* line-height: 10vh; */
+      }
+      .element5 {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 2vw;
+        font-family: "Quicksand", sans-serif;
+        /* position: fixed; */
+      }
+      .element6 {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 2vw;
+        font-family: "Quicksand", sans-serif;
+        /* position: fixed; */
+        /* line-height: 10vh; */
+      }
+      .bars {
+        display: inline-block;
+        vertical-align: middle;
+        /* font-size: 2vw; */
+        /* position: fixed; */
+      }
+      /* menuicon */
+      .line1 {
+        background-color: skyblue;
+        height: 3px;
+        width: 30px;
+        margin: 6px;
+      }
+      .line2 {
+        background-color: skyblue;
+        height: 3px;
+        width: 30px;
+        margin: 6px;
+      }
+      .line3 {
+        background-color: skyblue;
+        height: 3px;
+        width: 30px;
+        margin: 6px;
+      }
+      /* -- */
+
+      /* CROSSANIMATION */
+      .aline1 {
+        -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+        transform: rotate(-45deg) translate(-9px, 6px);
+      }
+      .aline2 {
+        opacity: 0;
+      }
+      .aline3 {
+        -webkit-transform: rotate(45deg) translate(-6px, -5px);
+        transform: rotate(45deg) translate(-6px, -5px);
+      }
+      /* -- */
+      .home{
+      color: white;
+      text-decoration: none;
+    }
+      .a1 {
+        color: white;
+        text-decoration: none;
+      }
+      .a2 {
+        color: white;
+        text-decoration: none;
+      }
+      .a3 {
+        color: white;
+        text-decoration: none;
+      }
+      .a4 {
+        color: white;
+        text-decoration: none;
+      }
+      .a5 {
+        color: white;
+        text-decoration: none;
+      }
+      .a1:hover {
+        color: skyblue;
+      }
+      .a2:hover {
+        color: skyblue;
+      }
+      .a3:hover {
+        color: skyblue;
+      }
+      .a4:hover {
+        color: skyblue;
+      }
+      .a5:hover {
+        color: skyblue;
+      }
+      .engine {
+        display: inline-block;
+        width: 20vw;
+      }
+      .container1 {
+        background-color: white;
+      }
+      .head1 {
+        font-size: 5vh;
+        padding-left: 5px;
+        padding-top: 5px;
+        font-family: "Alegreya Sans SC", sans-serif;
+      }
+      .head2 {
+        font-size: 5vh;
+        padding-left: 5px;
+        font-family: "Alegreya Sans SC", sans-serif;
+      }
+      .head3 {
+        font-size: 5vh;
+        padding-right: 5px;
+        padding-left: 5px;
+        font-family: "Alegreya Sans SC", sans-serif;
+      }
+      .subhead1 {
+        font-size: 4vh;
+        font-family: "Alegreya Sans SC", sans-serif;
+      }
+      .img1 {
+        cursor: pointer;
+      }
+      .para1 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para2 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para3 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para4 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para5 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para6 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para7 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para8 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para9 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para10 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      .para11 {
+        font-size: 2.7vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: "Fira Sans", sans-serif;
+      }
+      #code {
+        font-size: 1.8vh;
+        background-color: white;
+      }
+      .nextcontainer {
+      padding: 5px;
+      display: flex;
+      justify-content: center;
+    }
+    .next {
+      background-color: white;
+      color: purple;
+      padding: 4px;
+      font-size: 3vh;
+      font-family: "Source Code Pro", monospace;
+      cursor: pointer;
+      border: solid 3px purple;
+      border-radius: 4px;
+    }
+    .next:hover{
+        background-color: purple;
+        color: white;
+    }
+      /* html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      } */
+    </style>
+    <body></body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.0/prism.min.js"></script>
+    <script>
+      function myFunction() {
+        var x = document.getElementById("mytopnav");
+        if (x.className === "navbar") {
+          x.className += " responsive";
+        } else {
+          x.className = "navbar";
+        }
+      }
+
+      // --
+
+      function cross() {
+        var element = document.getElementById("line1");
+        element.classList.toggle("aline1");
+        var element = document.getElementById("line2");
+        element.classList.toggle("aline2");
+        var element = document.getElementById("line3");
+        element.classList.toggle("aline3");
+      }
+    </script>
+  </body>
+</html>

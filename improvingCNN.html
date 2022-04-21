@@ -1,0 +1,2892 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Improving our Neural Network</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Megrim&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="/path/to/styles/default.css" />
+    <script src="/path/to/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <!-- -- -->
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <!-- -- -->
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@200&display=swap"
+      rel="stylesheet"
+    />
+    <!-- --- -->
+  </head>
+  <div class="navbar" id="mytopnav">
+    <div class="navcontainer">
+      &nbsp&nbsp
+      <div class="bars">
+        <a
+          href="javascript:void(0);"
+          class="icon"
+          onclick="myFunction(); cross();"
+        >
+          <div class="line1" id="line1"></div>
+          <div class="line2" id="line2"></div>
+          <div class="line3" id="line3"></div
+        ></a>
+      </div>
+      &nbsp&nbsp
+      <div class="element1">
+        <a href="index.html" class="home"><b>ML</b>harbour</a>
+      </div>
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <div class="element2"><a href="" class="a1">Learn</a></div>
+      &nbsp&nbsp
+      <div class="element3"><a href="" class="a2">Blog</a></div>
+      &nbsp&nbsp
+      <div class="element4"><a href="" class="a3">Resources</a></div>
+      &nbsp&nbsp
+      <div class="element5"><a href="" class="a4">About</a></div>
+      &nbsp&nbsp
+      <div class="element6"><a href="" class="a5">Contact</a></div>
+      <!-- <div class="engine">
+      <script async src="https://cse.google.com/cse.js?cx=38c22d203e37ec2d0"></script>
+      <div class="gcse-search"></div></div> -->
+    </div>                          
+  </div>
+  <h1 class="head1">How TO/NOT TO improve your Neural Networks</h1>
+  <br />
+  <p class="para1">
+    Now that we have a working Baseline Model from the previous tutorial and
+    data ready to feed to our model all in place, lets improve the performance
+    of our model. <br />
+    In this tutorial we will understand ways to improve our CNN and understand
+    different ways of building a Neural Network and observe how it affects the
+    error rate of our network.
+  </p>
+  <br /><br />
+  <center>
+    <a
+      href="https://colab.research.google.com/drive/18QdCMurLp5DViBKni_wS7OR0IMeYVpvf?usp=sharing"
+      target="blank"
+    >
+      <img
+        class="img"
+        src="https://colab.research.google.com/assets/colab-badge.svg"
+        alt="Open In Colab"
+        height="35px"
+      />
+    </a>
+  </center>
+  <br />
+  <br />
+  <p class="para2">
+    <b> Importing required libraries.</b>
+  </p>
+  <pre><code class="language-python" id="code">
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchvision
+from torchvision import datasets
+import torchvision.transforms as transforms
+import torchvision.datasets as datasets
+from torch.utils.data import DataLoader
+import random
+import numpy
+import matplotlib.pyplot as plt
+from torchsummary import summary          
+</code></pre>
+  <br />
+  <p class="para3">
+    <b>Downloading the Data (CIFAR-10 dataset).</b>
+  </p>
+  <pre><code class="language-python" id="code">
+data_path = '/data'
+train_data = datasets.CIFAR10(data_path, train = True, download = True, transform=transforms.ToTensor())
+test_data = datasets.CIFAR10(data_path, train = False, download = True, transform=transforms.ToTensor())         
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Downloading https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz to /data/cifar-10-python.tar.gz
+            ||||||||||||||| 170499072/? [00:04<00:00, 44184988.52it/s]
+            Extracting /data/cifar-10-python.tar.gz to /data
+            Files already downloaded and verified          
+</code></pre>
+  <br />
+  <p class="para4">
+    <b>Normalizing the Data.</b>
+  </p>
+  <pre><code class="language-python" id="code">
+data_path = '/data'
+train_data = datasets.CIFAR10(data_path, train = True, download = True,
+                              transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),          #mean for each colour channel
+                                             (0.247, 0.243, 0.261))             #standard deviation for each colour channel
+    ]))
+test_data = datasets.CIFAR10(data_path, train = False, download = True,    
+                             transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),          #mean for each colour channel
+                                             (0.247, 0.243, 0.261))             #standard deviation for each colour channel
+    ]))            
+</code></pre>
+  <br />
+  <p class="para5">
+    <b>Defining our classes list.</b>
+  </p>
+  <pre><code class="language-python" id="code">
+classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+#             0             1           2      3      4       5      6        7       8        9           
+</code></pre>
+  <br />
+  <p class="para6">
+    <b>Specifying our Data loaders.</b>
+  </p>
+  <pre><code class="language-python" id="code">
+train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_data, batch_size=32, shuffle=False)            
+</code></pre>
+  <br />
+  <p class="para7">
+    <b>Setting up our device (GPU/CPU)</b>, since we are going to train a couple
+    of Deep Neural Networks, we are going to need quite the computation power to
+    boost training of our Models.
+  </p>
+  <pre><code class="language-python" id="code">
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     device(type='cuda', index=0)      
+</code></pre>
+  <p class="para8">
+    <b>Defining the training function</b> (updates mentioned with #1...)<br />
+    <br /><b>[1]</b> We define two empty lists (loss_per_iteration and
+    accuracy_per_iteration) to store the loss and accuracy values at every epoch
+    so that we are able to plot them later to visualise our Model's learning
+    curve, we just updated the previously used training function to make it more
+    capable.<br />
+    <b>[2]</b> After our Model finishes training for one epoch, we make a loop
+    that calculates the accuracy of the model on our test set on what it has
+    learnt till that instant. At every epoch, it is like calculating the
+    accuracy for a separate model as the model updates its parameters at every
+    epoch. So the acccuracy calculated when our model completes and stops
+    training would NOT be equal to the accuracy we calculate and store here at
+    every epoch. Calculating accuracy at every epoch gives us a basic idea of
+    where our model is heading to. Final accuracy is calculated after the
+    training is finished only. <br />
+    <b>[3]</b> Printing the loss and Test Accuracy at every epoch, :.5f and :.4f
+    are a type of python string formatting option, :.nf will print the value
+    only upto n decimal places, n being a real number. <br />
+    <b>[4]</b> Appending the loss and accuracy value to the lists we defined in
+    [1]. We will use them after training each model to plot their accuracy and
+    loss trend w.r.t. epochs.
+  </p>
+  <pre><code class="language-python" id="code">
+def train_batch(epochs, model, criterion, optimizer, train_loader):
+  loss_per_iteration = []                                                                                                     #1
+  accuracy_per_iteration = []                                                                                                 #1
+  total = 0
+  correct = 0 
+  for i in range(epochs):
+    train_loss = 0.0
+    for inputs, labels in train_loader:
+      inputs, labels = inputs.to(device), labels.to(device)
+      outputs = model(inputs)
+      loss = criterion(outputs, labels)
+      optimizer.zero_grad()
+      loss.backward()
+      optimizer.step()
+      train_loss = train_loss + loss.item()
+
+    with torch.no_grad():                                                                                                      #2
+      for test_data in test_loader:
+        test_inputs, test_labels = test_data
+        test_inputs, test_labels = test_inputs.to(device), test_labels.to(device)
+        test_outputs = model(test_inputs)
+        _, predicted = torch.max(test_outputs, 1)
+        total += test_labels.size(0)
+        correct += (predicted == test_labels).sum().item() 
+        test_accuracy = 100 * correct / total
+
+    print(f"Epoch: {i}/{epochs} Loss: {train_loss/len(train_loader):.5f} Test Accuracy:  {100* correct/total:.4f} %")           #3
+    loss_per_iteration.append(train_loss/len(train_loader))                                                                     #4
+    accuracy_per_iteration.append(test_accuracy)                                                                                #4    
+</code></pre>
+  <p class="para9">
+    Building our first Model, Modela. Remember our baseline model containing two
+    convolutional layers from the last tutorial which just achieved a accuracy
+    of 65% in 200 epochs. Modela has two more Convolution layers, a slight more
+    feature, with ReLU activation and MaxPool pooling. You will observe the
+    difference in the learning curve while training. Our first model (65% acc.)
+    was underfitting to our data because it just had 2 layers, so we defintely
+    needed more layers in it.
+  </p>
+  <pre><code class="language-python" id="code">
+class Modela(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.model = nn.Sequential(
+        nn.Conv2d(3, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Flatten(),
+        nn.Linear(8*4*4, 32),
+        nn.ReLU(),
+        nn.Linear(32, 10)
+    )
+  def forward(self, x):
+    return self.model(x)           
+</code></pre>
+  <pre><code class="language-python" id="code">
+modela = Modela()
+modela.to(device)
+summary(modela, (3, 32, 32))           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     ----------------------------------------------------------------
+                    Layer (type)               Output Shape         Param #
+            ================================================================
+                        Conv2d-1          [-1, 256, 32, 32]           7,168
+                          ReLU-2          [-1, 256, 32, 32]               0
+                     MaxPool2d-3          [-1, 256, 16, 16]               0
+                        Conv2d-4          [-1, 128, 16, 16]         295,040
+                          ReLU-5          [-1, 128, 16, 16]               0
+                     MaxPool2d-6            [-1, 128, 8, 8]               0
+                        Conv2d-7             [-1, 64, 8, 8]          73,792
+                          ReLU-8             [-1, 64, 8, 8]               0
+                     MaxPool2d-9             [-1, 64, 4, 4]               0
+                       Conv2d-10             [-1, 32, 4, 4]          18,464
+                         ReLU-11             [-1, 32, 4, 4]               0
+                    MaxPool2d-12             [-1, 32, 2, 2]               0
+                      Flatten-13                  [-1, 128]               0
+                       Linear-14                   [-1, 32]           4,128
+                         ReLU-15                   [-1, 32]               0
+                       Linear-16                   [-1, 10]             330
+            ================================================================
+            Total params: 398,922
+            Trainable params: 398,922
+            Non-trainable params: 0
+            ----------------------------------------------------------------
+            Input size (MB): 0.01
+            Forward/backward pass size (MB): 5.14
+            Params size (MB): 1.52
+            Estimated Total Size (MB): 6.68
+            ----------------------------------------------------------------           
+</code></pre>
+  <pre><code class="language-python" id="code">
+print(modela)            
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Modela(
+            (model): Sequential(
+                (0): Conv2d(3, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (1): ReLU()
+                (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (3): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (4): ReLU()
+                (5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (6): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (7): ReLU()
+                (8): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (9): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (10): ReLU()
+                (11): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (12): Flatten(start_dim=1, end_dim=-1)
+                (13): Linear(in_features=128, out_features=32, bias=True)
+                (14): ReLU()
+                (15): Linear(in_features=32, out_features=10, bias=True)
+            )
+            )           
+</code></pre>
+  <p class="para10">
+    Training our Modela for 50 epochs, now the question Why 50? We could have
+    achieved higher accuracy if we doubled the epochs. That is correct but
+    actually no, when we train our Modelb you will know why. Our motive is to
+    select the best components for our Neural Network that are time efficient as
+    well as which increase our model's performance. Modelb gives a huge boost as
+    we change a major component in it.
+  </p>
+  <pre><code class="language-python" id="code">
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(modela.parameters(), lr =0.001)
+
+train_batch(epochs=50,
+            model=modela,
+            criterion=criterion,
+            optimizer=optimizer,
+            train_loader = train_loader)           
+</code></pre>
+  <pre><code class="language-plaintext" id="code1">
+Output:     Epoch: 0/50 Loss: 2.30717 Test Accuracy:  10.7600 %
+            Epoch: 1/50 Loss: 2.30113 Test Accuracy:  11.0300 %
+            Epoch: 2/50 Loss: 2.28893 Test Accuracy:  12.5900 %
+            Epoch: 3/50 Loss: 2.25722 Test Accuracy:  13.6800 %
+            Epoch: 4/50 Loss: 2.18725 Test Accuracy:  15.6200 %
+            Epoch: 5/50 Loss: 2.07771 Test Accuracy:  17.5733 %
+            Epoch: 6/50 Loss: 1.97359 Test Accuracy:  19.4400 %
+            Epoch: 7/50 Loss: 1.88935 Test Accuracy:  21.2700 %
+            Epoch: 8/50 Loss: 1.79328 Test Accuracy:  22.8922 %
+            Epoch: 9/50 Loss: 1.70969 Test Accuracy:  24.4680 %
+            Epoch: 10/50 Loss: 1.64999 Test Accuracy:  25.9318 %
+            Epoch: 11/50 Loss: 1.60060 Test Accuracy:  27.1825 %
+            Epoch: 12/50 Loss: 1.55486 Test Accuracy:  28.4354 %
+            Epoch: 13/50 Loss: 1.51618 Test Accuracy:  29.5393 %
+            Epoch: 14/50 Loss: 1.48198 Test Accuracy:  30.7007 %
+            Epoch: 15/50 Loss: 1.45080 Test Accuracy:  31.7512 %
+            Epoch: 16/50 Loss: 1.42088 Test Accuracy:  32.7206 %
+            Epoch: 17/50 Loss: 1.39426 Test Accuracy:  33.6761 %
+            Epoch: 18/50 Loss: 1.36771 Test Accuracy:  34.5263 %
+            Epoch: 19/50 Loss: 1.34319 Test Accuracy:  35.2320 %
+            Epoch: 20/50 Loss: 1.32084 Test Accuracy:  35.9624 %
+            Epoch: 21/50 Loss: 1.29592 Test Accuracy:  36.5114 %
+            Epoch: 22/50 Loss: 1.27484 Test Accuracy:  37.2965 %
+            Epoch: 23/50 Loss: 1.25240 Test Accuracy:  38.0696 %
+            Epoch: 24/50 Loss: 1.23215 Test Accuracy:  38.7176 %
+            Epoch: 25/50 Loss: 1.21420 Test Accuracy:  39.3508 %
+            Epoch: 26/50 Loss: 1.19325 Test Accuracy:  39.9563 %
+            Epoch: 27/50 Loss: 1.17882 Test Accuracy:  40.5843 %
+            Epoch: 28/50 Loss: 1.15966 Test Accuracy:  41.1645 %
+            Epoch: 29/50 Loss: 1.14259 Test Accuracy:  41.6883 %
+            Epoch: 30/50 Loss: 1.12625 Test Accuracy:  42.2416 %
+            Epoch: 31/50 Loss: 1.10901 Test Accuracy:  42.7575 %
+            Epoch: 32/50 Loss: 1.09510 Test Accuracy:  43.2882 %
+            Epoch: 33/50 Loss: 1.07852 Test Accuracy:  43.6847 %
+            Epoch: 34/50 Loss: 1.06106 Test Accuracy:  44.2046 %
+            Epoch: 35/50 Loss: 1.04505 Test Accuracy:  44.6883 %
+            Epoch: 36/50 Loss: 1.03017 Test Accuracy:  45.1557 %
+            Epoch: 37/50 Loss: 1.01369 Test Accuracy:  45.6116 %
+            Epoch: 38/50 Loss: 1.00098 Test Accuracy:  46.0190 %
+            Epoch: 39/50 Loss: 0.98689 Test Accuracy:  46.4607 %
+            Epoch: 40/50 Loss: 0.97189 Test Accuracy:  46.8885 %
+            Epoch: 41/50 Loss: 0.96021 Test Accuracy:  47.2757 %
+            Epoch: 42/50 Loss: 0.94511 Test Accuracy:  47.6926 %
+            Epoch: 43/50 Loss: 0.93303 Test Accuracy:  48.1007 %
+            Epoch: 44/50 Loss: 0.91979 Test Accuracy:  48.4369 %
+            Epoch: 45/50 Loss: 0.90829 Test Accuracy:  48.8200 %
+            Epoch: 46/50 Loss: 0.89641 Test Accuracy:  49.1898 %
+            Epoch: 47/50 Loss: 0.88585 Test Accuracy:  49.5546 %
+            Epoch: 48/50 Loss: 0.87218 Test Accuracy:  49.9135 %
+            Epoch: 49/50 Loss: 0.86385 Test Accuracy:  50.2644 %           
+</code></pre>
+  <pre><code class="language-python" id="code">
+plot_a_sgd = plt.figure(figsize=(12, 2.5), dpi=200)
+
+plt.subplot(1, 2, 1)
+plt.plot(loss_per_iteration)
+plt.title('Loss vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('CrossEntropyLoss')
+
+plt.subplot(1, 2, 2)
+plot = plt.plot(accuracy_per_iteration)
+plt.title('Test Accuracy vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Test Accuracy (%)')
+
+plt.suptitle("Model a SGD")
+plt.show()            
+</code></pre>
+  <img src="images/modelasgd.png" alt="" class="img1" />
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in train_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modela(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item()
+
+  print(f'Accuracy of the network on the 50000 train images: {100 * correct / total} %')           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 50000 train images: 70.43 %            
+</code></pre>
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in test_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modela(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item()
+
+  print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 10000 test images: 67.46 %           
+</code></pre>
+  <p class="para11">
+    <b>Modela attains train accuracy of 70.43% and test accuracy of 67.46%</b>,
+    still 2% higher than our baseline model in just 1/5 of the epochs, crazy
+    right? Things get more interesting as we get near to the final model. Lets
+    move on to Modelb.
+  </p>
+  <br />
+
+  <!-- =================================================================================== -->
+
+  <h3 class="head2">Changing the Optimizer (Modela)</h3>
+  <p class="para12">
+    Modelb has the same architecture as Modela but instead of SGD we will use
+    Adam as the optimizer. Adam is now the most used optimizer in
+    State-of-the-art Neural Networks because of its efficiency. We will be using
+    Adam in almost every neural network we build. <br />
+    More on the Adam optimizer <a href="">here</a>.
+  </p>
+  <pre><code class="language-python" id="code">
+#73.64% Accuracy MODELA BUT ADAM OPTIMIZER
+class Modela(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.model = nn.Sequential(
+        nn.Conv2d(3, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Flatten(),
+        nn.Linear(8*4*4, 32),
+        nn.ReLU(),
+        nn.Linear(32, 10)
+    )
+  def forward(self, x):
+    return self.model(x)           
+</code></pre>
+  <pre><code class="language-python" id="code">
+modela = Modela()
+modela.to(device)
+summary(modela, (3, 32, 32))           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     ----------------------------------------------------------------
+                    Layer (type)               Output Shape         Param #
+            ================================================================
+                        Conv2d-1          [-1, 256, 32, 32]           7,168
+                          ReLU-2          [-1, 256, 32, 32]               0
+                     MaxPool2d-3          [-1, 256, 16, 16]               0
+                        Conv2d-4          [-1, 128, 16, 16]         295,040
+                          ReLU-5          [-1, 128, 16, 16]               0
+                     MaxPool2d-6            [-1, 128, 8, 8]               0
+                        Conv2d-7             [-1, 64, 8, 8]          73,792
+                          ReLU-8             [-1, 64, 8, 8]               0
+                     MaxPool2d-9             [-1, 64, 4, 4]               0
+                       Conv2d-10             [-1, 32, 4, 4]          18,464
+                         ReLU-11             [-1, 32, 4, 4]               0
+                    MaxPool2d-12             [-1, 32, 2, 2]               0
+                      Flatten-13                  [-1, 128]               0
+                       Linear-14                   [-1, 32]           4,128
+                         ReLU-15                   [-1, 32]               0
+                       Linear-16                   [-1, 10]             330
+            ================================================================
+            Total params: 398,922
+            Trainable params: 398,922
+            Non-trainable params: 0
+            ----------------------------------------------------------------
+            Input size (MB): 0.01
+            Forward/backward pass size (MB): 5.14
+            Params size (MB): 1.52
+            Estimated Total Size (MB): 6.68
+            ----------------------------------------------------------------           
+</code></pre>
+  <pre><code class="language-python" id="code">
+#SAME MODELA BUT ADAM OPTIMIZER
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(modela.parameters(), lr =0.001)
+
+train_batch(epochs=50,
+            model=modela,
+            criterion=criterion,
+            optimizer=optimizer,
+            train_loader = train_loader)           
+</code></pre>
+  <p class="para13">
+    Modela v/s Modelb, the starting accuracies speak for how efficient Adam is.
+    60% accuracy in first epoch compared to 10% in the basline model with SGD,
+    the reason we trained Modela for 50 epochs is because Adam compared to SGD
+    has a better learning curve. 67% compared to 73% accuracy on the same model
+    architecture by just changing the optimizer? That is the reason we will use
+    Adam, Adam is also used in most of the State-of-the-art neural networks
+    because of its efficiency.
+  </p>
+  <pre><code class="language-plaintext" id="code2">
+Output:     Epoch: 0/50 Loss: 1.44383 Test Accuracy:  60.5800 %
+            Epoch: 1/50 Loss: 0.99512 Test Accuracy:  64.1250 %
+            Epoch: 2/50 Loss: 0.83377 Test Accuracy:  66.3700 %
+            Epoch: 3/50 Loss: 0.73864 Test Accuracy:  67.4975 %
+            Epoch: 4/50 Loss: 0.67610 Test Accuracy:  68.3360 %
+            Epoch: 5/50 Loss: 0.62083 Test Accuracy:  69.2517 %
+            Epoch: 6/50 Loss: 0.57070 Test Accuracy:  69.9243 %
+            Epoch: 7/50 Loss: 0.53658 Test Accuracy:  70.2850 %
+            Epoch: 8/50 Loss: 0.50229 Test Accuracy:  70.7567 %
+            Epoch: 9/50 Loss: 0.47105 Test Accuracy:  71.1090 %
+            Epoch: 10/50 Loss: 0.44249 Test Accuracy:  71.4518 %
+            Epoch: 11/50 Loss: 0.41670 Test Accuracy:  71.7692 %
+            Epoch: 12/50 Loss: 0.39067 Test Accuracy:  71.9538 %
+            Epoch: 13/50 Loss: 0.36982 Test Accuracy:  72.1229 %
+            Epoch: 14/50 Loss: 0.35069 Test Accuracy:  72.1720 %
+            Epoch: 15/50 Loss: 0.32729 Test Accuracy:  72.2775 %
+            Epoch: 16/50 Loss: 0.31490 Test Accuracy:  72.3935 %
+            Epoch: 17/50 Loss: 0.29130 Test Accuracy:  72.4839 %
+            Epoch: 18/50 Loss: 0.28546 Test Accuracy:  72.5432 %
+            Epoch: 19/50 Loss: 0.26507 Test Accuracy:  72.6285 %
+            Epoch: 20/50 Loss: 0.25761 Test Accuracy:  72.6900 %
+            Epoch: 21/50 Loss: 0.24456 Test Accuracy:  72.7132 %
+            Epoch: 22/50 Loss: 0.23624 Test Accuracy:  72.7722 %
+            Epoch: 23/50 Loss: 0.22570 Test Accuracy:  72.7942 %
+            Epoch: 24/50 Loss: 0.21323 Test Accuracy:  72.8564 %
+            Epoch: 25/50 Loss: 0.20614 Test Accuracy:  72.8904 %
+            Epoch: 26/50 Loss: 0.20047 Test Accuracy:  72.8922 %
+            Epoch: 27/50 Loss: 0.19946 Test Accuracy:  72.9207 %
+            Epoch: 28/50 Loss: 0.18562 Test Accuracy:  72.9659 %
+            Epoch: 29/50 Loss: 0.18026 Test Accuracy:  72.9650 %
+            Epoch: 30/50 Loss: 0.17899 Test Accuracy:  72.9994 %
+            Epoch: 31/50 Loss: 0.16957 Test Accuracy:  73.0103 %
+            Epoch: 32/50 Loss: 0.16360 Test Accuracy:  73.0158 %
+            Epoch: 33/50 Loss: 0.16416 Test Accuracy:  73.0279 %
+            Epoch: 34/50 Loss: 0.15463 Test Accuracy:  73.0374 %
+            Epoch: 35/50 Loss: 0.15540 Test Accuracy:  73.0253 %
+            Epoch: 36/50 Loss: 0.15469 Test Accuracy:  73.0351 %
+            Epoch: 37/50 Loss: 0.14358 Test Accuracy:  73.0529 %
+            Epoch: 38/50 Loss: 0.14039 Test Accuracy:  73.0490 %
+            Epoch: 39/50 Loss: 0.14621 Test Accuracy:  73.0510 %
+            Epoch: 40/50 Loss: 0.13653 Test Accuracy:  73.0693 %
+            Epoch: 41/50 Loss: 0.13917 Test Accuracy:  73.0757 %
+            Epoch: 42/50 Loss: 0.13884 Test Accuracy:  73.0860 %
+            Epoch: 43/50 Loss: 0.13093 Test Accuracy:  73.1000 %
+            Epoch: 44/50 Loss: 0.13365 Test Accuracy:  73.0929 %
+            Epoch: 45/50 Loss: 0.12886 Test Accuracy:  73.1015 %
+            Epoch: 46/50 Loss: 0.13103 Test Accuracy:  73.0909 %
+            Epoch: 47/50 Loss: 0.11922 Test Accuracy:  73.0919 %
+            Epoch: 48/50 Loss: 0.12159 Test Accuracy:  73.1016 %
+            Epoch: 49/50 Loss: 0.12454 Test Accuracy:  73.1124 %     
+</code></pre>
+  <pre><code class="language-python" id="code">
+plot_a_adam = plt.figure(figsize=(12, 2.5), dpi=200)
+            
+plt.subplot(1, 2, 1)
+plt.plot(loss_per_iteration)
+plt.title('Loss vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('CrossEntropyLoss')
+            
+plt.subplot(1, 2, 2)
+plot = plt.plot(accuracy_per_iteration)
+plt.title('Test Accuracy vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Test Accuracy (%)')
+            
+plt.suptitle("Model a Adam")
+plt.show()           
+</code></pre>
+  <img src="images/modelaadam.png" alt="" class="img2" />
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in train_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modela(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item()
+
+  print(f'Accuracy of the network on the 50000 train images: {100 * correct / total} %')           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 50000 train images: 96.446 %          
+</code></pre>
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in test_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modela(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item()
+
+  print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 10000 test images: 73.64 %           
+</code></pre>
+  <p class="para14">
+    <b
+      >Modela with Adam optimizer achieves a train accuracy of 96.446% and a
+      test accuracy of 73.64%</b
+    >, 7% higher than Modela with SGD optimizer.
+  </p>
+  <br />
+  <h3 class="head3">What Overfitting looks like.. (Modelb)</h3>
+  <p class="para14">
+    Modelb has eight convolution layers divided into blocks which are then
+    maxpooled, Modelb has 1.7 million parameters that it has to update at every
+    iteration, but this time our model performs even worse, and yes in reality
+    you will come across overfitting problems with your model so you should know
+    how it looks like. Our model should not be overpowered or underpowered,
+    should be about just right for the task. Sometimes our model learns the
+    training too well so it is unable to recognise the pattern on the data it
+    has never seen before. <br />
+    In Modelb we remove the two maxpooling layers and add four more
+    convolutional layers, because addding layers is good right? Well we have a
+    limit for everything and as you progress through your machine learning
+    experiments, you figure out the most optimal methods to design your own
+    models.
+  </p>
+  <pre><code class="language-python" id="code">
+class Modelb(nn.Module): #reducing maxpool
+  def __init__(self):
+    super().__init__()
+    self.model = nn.Sequential(
+        nn.Conv2d(3, 512, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(512, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+
+        nn.MaxPool2d(2),
+        
+        nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(32, 16, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(16, 8, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(8, 4, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+
+        nn.MaxPool2d(2),
+
+        nn.Flatten(),
+        nn.Linear(256, 512),
+        nn.ReLU(),
+        nn.Linear(512, 10)
+    )
+  def forward(self, x):
+    return self.model(x)           
+</code></pre>
+  <pre><code class="language-python" id="code">
+modelb = Modelb()
+modelb.to(device)
+summary(modelb, (3, 32, 32))         
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     ----------------------------------------------------------------
+                    Layer (type)               Output Shape         Param #
+            ================================================================
+                        Conv2d-1          [-1, 512, 32, 32]          14,336
+                          ReLU-2          [-1, 512, 32, 32]               0
+                        Conv2d-3          [-1, 256, 32, 32]       1,179,904
+                          ReLU-4          [-1, 256, 32, 32]               0
+                        Conv2d-5          [-1, 128, 32, 32]         295,040
+                          ReLU-6          [-1, 128, 32, 32]               0
+                        Conv2d-7           [-1, 64, 32, 32]          73,792
+                          ReLU-8           [-1, 64, 32, 32]               0
+                     MaxPool2d-9           [-1, 64, 16, 16]               0
+                       Conv2d-10           [-1, 32, 16, 16]          18,464
+                         ReLU-11           [-1, 32, 16, 16]               0
+                       Conv2d-12           [-1, 16, 16, 16]           4,624
+                         ReLU-13           [-1, 16, 16, 16]               0
+                       Conv2d-14            [-1, 8, 16, 16]           1,160
+                         ReLU-15            [-1, 8, 16, 16]               0
+                       Conv2d-16            [-1, 4, 16, 16]             292
+                         ReLU-17            [-1, 4, 16, 16]               0
+                    MaxPool2d-18              [-1, 4, 8, 8]               0
+                      Flatten-19                  [-1, 256]               0
+                       Linear-20                  [-1, 512]         131,584
+                         ReLU-21                  [-1, 512]               0
+                       Linear-22                   [-1, 10]           5,130
+            ================================================================
+            Total params: 1,724,326
+            Trainable params: 1,724,326
+            Non-trainable params: 0
+            ----------------------------------------------------------------
+            Input size (MB): 0.01
+            Forward/backward pass size (MB): 15.37
+            Params size (MB): 6.58
+            Estimated Total Size (MB): 21.96
+            ----------------------------------------------------------------           
+</code></pre>
+  <pre><code class="language-python" id="code">
+print(modelb)          
+</code></pre>
+  <pre><code class="language-python" id="code">
+Output:     Modelb(
+            (model): Sequential(
+                (0): Conv2d(3, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (1): ReLU()
+                (2): Conv2d(512, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (3): ReLU()
+                (4): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (5): ReLU()
+                (6): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (7): ReLU()
+                (8): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (9): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (10): ReLU()
+                (11): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (12): ReLU()
+                (13): Conv2d(16, 8, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (14): ReLU()
+                (15): Conv2d(8, 4, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (16): ReLU()
+                (17): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (18): Flatten(start_dim=1, end_dim=-1)
+                (19): Linear(in_features=256, out_features=512, bias=True)
+                (20): ReLU()
+                (21): Linear(in_features=512, out_features=10, bias=True)
+            )
+            )            
+</code></pre>
+  <pre><code class="language-python" id="code">
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(modelb.parameters(), lr =0.001)
+
+train_batch(epochs=40,
+            model=modelb,
+            criterion=criterion,
+            optimizer=optimizer,
+            train_loader = train_loader)          
+</code></pre>
+  <pre><code class="language-plaintext" id="code3">
+Output:     Epoch: 0/40 Loss: 1.64300 Test Accuracy:  49.2400 %
+            Epoch: 1/40 Loss: 1.32124 Test Accuracy:  52.3350 %
+            Epoch: 2/40 Loss: 1.16530 Test Accuracy:  53.9733 %
+            Epoch: 3/40 Loss: 1.04714 Test Accuracy:  55.9625 %
+            Epoch: 4/40 Loss: 0.96013 Test Accuracy:  57.3780 %
+            Epoch: 5/40 Loss: 0.88864 Test Accuracy:  58.3017 %
+            Epoch: 6/40 Loss: 0.82391 Test Accuracy:  59.2943 %
+            Epoch: 7/40 Loss: 0.76314 Test Accuracy:  60.0675 %
+            Epoch: 8/40 Loss: 0.70994 Test Accuracy:  60.6244 %
+            Epoch: 9/40 Loss: 0.65724 Test Accuracy:  61.0390 %
+            Epoch: 10/40 Loss: 0.60698 Test Accuracy:  61.3300 %
+            Epoch: 11/40 Loss: 0.56651 Test Accuracy:  61.6308 %
+            Epoch: 12/40 Loss: 0.52612 Test Accuracy:  61.8669 %
+            Epoch: 13/40 Loss: 0.49681 Test Accuracy:  62.0271 %
+            Epoch: 14/40 Loss: 0.45514 Test Accuracy:  62.1687 %
+            Epoch: 15/40 Loss: 0.41876 Test Accuracy:  62.2413 %
+            Epoch: 16/40 Loss: 0.39649 Test Accuracy:  62.3065 %
+            Epoch: 17/40 Loss: 0.37796 Test Accuracy:  62.3578 %
+            Epoch: 18/40 Loss: 0.35628 Test Accuracy:  62.4142 %
+            Epoch: 19/40 Loss: 0.34020 Test Accuracy:  62.4335 %
+            Epoch: 20/40 Loss: 0.32570 Test Accuracy:  62.4776 %
+            Epoch: 21/40 Loss: 0.30255 Test Accuracy:  62.5282 %
+            Epoch: 22/40 Loss: 0.29994 Test Accuracy:  62.5552 %
+            Epoch: 23/40 Loss: 0.28614 Test Accuracy:  62.5679 %
+            Epoch: 24/40 Loss: 0.27348 Test Accuracy:  62.5628 %
+            Epoch: 25/40 Loss: 0.25925 Test Accuracy:  62.5838 %
+            Epoch: 26/40 Loss: 0.25451 Test Accuracy:  62.6093 %
+            Epoch: 27/40 Loss: 0.24946 Test Accuracy:  62.5989 %
+            Epoch: 28/40 Loss: 0.24059 Test Accuracy:  62.5748 %
+            Epoch: 29/40 Loss: 0.23164 Test Accuracy:  62.5820 %
+            Epoch: 30/40 Loss: 0.23531 Test Accuracy:  62.5939 %
+            Epoch: 31/40 Loss: 0.22422 Test Accuracy:  62.6119 %
+            Epoch: 32/40 Loss: 0.20911 Test Accuracy:  62.6152 %
+            Epoch: 33/40 Loss: 0.21300 Test Accuracy:  62.6315 %
+            Epoch: 34/40 Loss: 0.21215 Test Accuracy:  62.6217 %
+            Epoch: 35/40 Loss: 0.20219 Test Accuracy:  62.6236 %
+            Epoch: 36/40 Loss: 0.20352 Test Accuracy:  62.6238 %
+            Epoch: 37/40 Loss: 0.20606 Test Accuracy:  62.6153 %
+            Epoch: 38/40 Loss: 0.19133 Test Accuracy:  62.6046 %
+            Epoch: 39/40 Loss: 0.19103 Test Accuracy:  62.5870 %          
+        </code></pre>
+  <pre><code class="language-python" id="code">
+plot_b = plt.figure(figsize=(12, 2.5), dpi=200)
+        
+plt.subplot(1, 2, 1)
+plt.plot(loss_per_iteration)
+ plt.title('Loss vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('CrossEntropyLoss')
+        
+plt.subplot(1, 2, 2)
+plot = plt.plot(accuracy_per_iteration)
+plt.title('Test Accuracy vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Test Accuracy (%)')
+
+plt.suptitle("Model b")
+plt.show()           
+</code></pre>
+  <img src="images/modelb.png" alt="" class="img3" />
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in test_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modelb(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item() 
+    from sklearn.metrics import f1_score   
+    f1_score = f1_score(labels.cpu(), predicted.cpu(), average='micro') 
+
+print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
+print(f'f1_score: {f1_score}')          
+</code></pre>
+  <pre><code class="language-python" id="code">
+Output:     Accuracy of the network on the 10000 test images: 61.9 %
+            f1_score: 0.5625           
+</code></pre>
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in train_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modelb(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item()
+
+  print(f'Accuracy of the network on the 50000 train images: {100 * correct // total} %')           
+</code></pre>
+  <pre><code class="language-python" id="code">
+Output:     Accuracy of the network on the 50000 train images: 94 %          
+</code></pre>
+  <p class="para15">
+    <b>Modelb attains a train accuracy of 94% and test accuracy of 61.9%</b>,
+    the difference between the two indicates overfitting. Maybe because we
+    reduced the MaxPool layers and added a bit more features than we should have
+    ? Lets find out.
+  </p>
+  <br />
+
+  <!-- ============================================================================ -->
+
+  <h3 class="head4">Using Dropout to reduce overfitting (Modelc)</h3>
+  <p class="para15">
+    In Modelc we reduce the number of features to half, which reduces the model
+    parameters to ~600k. nn.Dropout() randomly zeroes some elements that are
+    given to it as a input, which reduces the size of the network by ramoving
+    random nodes(neurons) at each iteration, which changes some layers output
+    size randomly which forces its nearby neurons to updates their weights to
+    correct themselves, reducing overfitting, hence performing a slightly better
+    than before.
+  </p>
+  <pre><code class="language-python" id="code">
+class Modelc(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.model = nn.Sequential(
+        nn.Conv2d(3, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Dropout(),
+
+        nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Dropout(),
+
+        nn.Flatten(),
+        nn.Linear(4096, 32),
+        nn.ReLU(),
+        nn.Linear(32, 10)
+    )
+  def forward(self, x):
+    return self.model(x)           
+</code></pre>
+  <pre><code class="language-python" id="code">
+modelc = Modelc()
+modelc.to(device)
+summary(modelc, (3, 32, 32))         
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     ----------------------------------------------------------------
+                    Layer (type)               Output Shape         Param #
+            ================================================================
+                        Conv2d-1          [-1, 128, 32, 32]           3,584
+                          ReLU-2          [-1, 128, 32, 32]               0
+                        Conv2d-3          [-1, 128, 32, 32]         147,584
+                          ReLU-4          [-1, 128, 32, 32]               0
+                        Conv2d-5          [-1, 128, 32, 32]         147,584
+                          ReLU-6          [-1, 128, 32, 32]               0
+                        Conv2d-7           [-1, 64, 32, 32]          73,792
+                          ReLU-8           [-1, 64, 32, 32]               0
+                     MaxPool2d-9           [-1, 64, 16, 16]               0
+                      Dropout-10           [-1, 64, 16, 16]               0
+                       Conv2d-11           [-1, 64, 16, 16]          36,928
+                         ReLU-12           [-1, 64, 16, 16]               0
+                       Conv2d-13           [-1, 64, 16, 16]          36,928
+                         ReLU-14           [-1, 64, 16, 16]               0
+                       Conv2d-15           [-1, 64, 16, 16]          36,928
+                         ReLU-16           [-1, 64, 16, 16]               0
+                       Conv2d-17           [-1, 64, 16, 16]          36,928
+                         ReLU-18           [-1, 64, 16, 16]               0
+                    MaxPool2d-19             [-1, 64, 8, 8]               0
+                      Dropout-20             [-1, 64, 8, 8]               0
+                      Flatten-21                 [-1, 4096]               0
+                       Linear-22                   [-1, 32]         131,104
+                         ReLU-23                   [-1, 32]               0
+                       Linear-24                   [-1, 10]             330
+            ================================================================
+            Total params: 651,690
+            Trainable params: 651,690
+            Non-trainable params: 0
+            ----------------------------------------------------------------
+            Input size (MB): 0.01
+            Forward/backward pass size (MB): 8.34
+            Params size (MB): 2.49
+            Estimated Total Size (MB): 10.84
+            ----------------------------------------------------------------           
+</code></pre>
+  <pre><code class="language-python" id="code">
+# 200 EPOCHS
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(modelc.parameters(), lr =0.001)
+
+train_batch(epochs=70,
+            model=modelc,
+            criterion=criterion,
+            optimizer=optimizer,
+            train_loader = train_loader)         
+</code></pre>
+  <pre><code class="language-plaintext" id="code4">
+Output:     Epoch: 0/70 Loss: 1.67641 Test Accuracy:  49.2100 %
+            Epoch: 1/70 Loss: 1.28308 Test Accuracy:  53.3300 %
+            Epoch: 2/70 Loss: 1.10771 Test Accuracy:  56.6933 %
+            Epoch: 3/70 Loss: 1.00208 Test Accuracy:  58.8500 %
+            Epoch: 4/70 Loss: 0.93392 Test Accuracy:  60.2800 %
+            Epoch: 5/70 Loss: 0.88025 Test Accuracy:  61.5550 %
+            Epoch: 6/70 Loss: 0.84906 Test Accuracy:  62.3429 %
+            Epoch: 7/70 Loss: 0.82610 Test Accuracy:  63.2475 %
+            Epoch: 8/70 Loss: 0.80776 Test Accuracy:  63.9922 %
+            Epoch: 9/70 Loss: 0.78815 Test Accuracy:  64.7030 %
+            Epoch: 10/70 Loss: 0.77141 Test Accuracy:  65.2700 %
+            Epoch: 11/70 Loss: 0.75203 Test Accuracy:  65.8067 %
+            Epoch: 12/70 Loss: 0.74631 Test Accuracy:  66.1992 %
+            Epoch: 13/70 Loss: 0.73607 Test Accuracy:  66.5893 %
+            Epoch: 14/70 Loss: 0.72386 Test Accuracy:  66.9187 %
+            Epoch: 15/70 Loss: 0.70831 Test Accuracy:  67.1994 %
+            Epoch: 16/70 Loss: 0.70602 Test Accuracy:  67.5229 %
+            Epoch: 17/70 Loss: 0.70297 Test Accuracy:  67.7561 %
+            Epoch: 18/70 Loss: 0.69587 Test Accuracy:  67.9705 %
+            Epoch: 19/70 Loss: 0.69141 Test Accuracy:  68.1775 %
+            Epoch: 20/70 Loss: 0.68068 Test Accuracy:  68.3600 %
+            Epoch: 21/70 Loss: 0.68278 Test Accuracy:  68.5236 %
+            Epoch: 22/70 Loss: 0.68015 Test Accuracy:  68.7030 %
+            Epoch: 23/70 Loss: 0.67584 Test Accuracy:  68.8858 %
+            Epoch: 24/70 Loss: 0.65983 Test Accuracy:  69.0792 %
+            Epoch: 25/70 Loss: 0.65984 Test Accuracy:  69.2538 %
+            Epoch: 26/70 Loss: 0.66728 Test Accuracy:  69.3885 %
+            Epoch: 27/70 Loss: 0.66168 Test Accuracy:  69.4689 %
+            Epoch: 28/70 Loss: 0.65192 Test Accuracy:  69.5669 %
+            Epoch: 29/70 Loss: 0.65300 Test Accuracy:  69.6550 %
+            Epoch: 30/70 Loss: 0.65060 Test Accuracy:  69.7519 %
+            Epoch: 31/70 Loss: 0.64601 Test Accuracy:  69.8366 %
+            Epoch: 32/70 Loss: 0.65042 Test Accuracy:  69.9112 %
+            Epoch: 33/70 Loss: 0.64886 Test Accuracy:  69.9906 %
+            Epoch: 34/70 Loss: 0.63987 Test Accuracy:  70.1111 %
+            Epoch: 35/70 Loss: 0.64158 Test Accuracy:  70.2150 %
+            Epoch: 36/70 Loss: 0.64817 Test Accuracy:  70.3008 %
+            Epoch: 37/70 Loss: 0.63655 Test Accuracy:  70.3763 %
+            Epoch: 38/70 Loss: 0.64232 Test Accuracy:  70.4659 %
+            Epoch: 39/70 Loss: 0.63705 Test Accuracy:  70.5425 %
+            Epoch: 40/70 Loss: 0.63660 Test Accuracy:  70.5520 %
+            Epoch: 41/70 Loss: 0.64148 Test Accuracy:  70.6226 %
+            Epoch: 42/70 Loss: 0.63438 Test Accuracy:  70.6826 %
+            Epoch: 43/70 Loss: 0.63836 Test Accuracy:  70.7464 %
+            Epoch: 44/70 Loss: 0.64174 Test Accuracy:  70.8222 %
+            Epoch: 45/70 Loss: 0.62981 Test Accuracy:  70.8665 %
+            Epoch: 46/70 Loss: 0.62914 Test Accuracy:  70.9336 %
+            Epoch: 47/70 Loss: 0.62928 Test Accuracy:  70.9781 %
+            Epoch: 48/70 Loss: 0.64107 Test Accuracy:  71.0171 %
+            Epoch: 49/70 Loss: 0.63738 Test Accuracy:  71.0808 %
+            Epoch: 50/70 Loss: 0.62300 Test Accuracy:  71.1388 %
+            Epoch: 51/70 Loss: 0.63128 Test Accuracy:  71.1827 %
+            Epoch: 52/70 Loss: 0.62650 Test Accuracy:  71.2326 %
+            Epoch: 53/70 Loss: 0.63874 Test Accuracy:  71.2626 %
+            Epoch: 54/70 Loss: 0.64249 Test Accuracy:  71.3015 %
+            Epoch: 55/70 Loss: 0.63700 Test Accuracy:  71.3477 %
+            Epoch: 56/70 Loss: 0.63355 Test Accuracy:  71.3919 %
+            Epoch: 57/70 Loss: 0.64238 Test Accuracy:  71.4359 %
+            Epoch: 58/70 Loss: 0.63418 Test Accuracy:  71.4646 %
+            Epoch: 59/70 Loss: 0.63174 Test Accuracy:  71.4820 %
+            Epoch: 60/70 Loss: 0.64405 Test Accuracy:  71.5151 %
+            Epoch: 61/70 Loss: 0.63777 Test Accuracy:  71.5589 %
+            Epoch: 62/70 Loss: 0.63361 Test Accuracy:  71.5717 %
+            Epoch: 63/70 Loss: 0.64627 Test Accuracy:  71.5958 %
+            Epoch: 64/70 Loss: 0.65393 Test Accuracy:  71.6083 %
+            Epoch: 65/70 Loss: 0.65078 Test Accuracy:  71.6297 %
+            Epoch: 66/70 Loss: 0.63980 Test Accuracy:  71.6352 %
+            Epoch: 67/70 Loss: 0.63664 Test Accuracy:  71.6560 %
+            Epoch: 68/70 Loss: 0.63581 Test Accuracy:  71.6729 %
+            Epoch: 69/70 Loss: 0.64426 Test Accuracy:  71.6776 %         
+        </code></pre>
+  <pre><code class="language-python" id="code">
+plot_c = plt.figure(figsize=(12, 2.5), dpi=200)
+        
+plt.subplot(1, 2, 1)
+plt.plot(loss_per_iteration)
+plt.title('Loss vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('CrossEntropyLoss')
+        
+plt.subplot(1, 2, 2)
+plot = plt.plot(accuracy_per_iteration)
+plt.title('Test Accuracy vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Test Accuracy (%)')
+        
+plt.suptitle("Model c")
+plt.show()          
+</code></pre>
+  <img src="images/modelc.png" alt="" class="img4" />
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in test_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modelc(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item() 
+    from sklearn.metrics import f1_score   
+    f1_score = f1_score(labels.cpu(), predicted.cpu(), average='micro') 
+
+print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
+print(f'f1_score: {f1_score}')          
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 10000 test images: 71.9 %
+            f1_score: 0.6875          
+</code></pre>
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in train_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modelc(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item() 
+
+  print(f'Accuracy of the network on the 50000 train images: {100 * correct / total} %')
+  print(f'Correct {correct}')           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 50000 train images: 76.792 %
+            Correct 38396          
+</code></pre>
+  <p class="para16">
+    Modelc attains a train accuracy of 76.792% and test accuracy of 71.9%,
+    better than Modelb but not remarkable either. However Dropout reduced the
+    overfitting we faced in Modelb. There a lot of other methods to reduce
+    overfitting like there are to building a model. So that you witnessed an
+    example of overfitting now lets get our model to a good accuracy.
+  </p>
+  <br />
+
+  <!-- ======================================================================================= -->
+  <h3 class="head5">Getting our model uphill (Modeld)</h3>
+  <p class="para17">
+    Modeld is basically a bigger version of Modela containing 4 convolutional
+    blocks, each having 2 convolutional layers which are maxpooled then to pass
+    to the next conv block. Since MaxPooling selects the most important features
+    from the images, the number of maxpool layers we use certainly do affect the
+    accuracy to a huge extent. So we use Maxpooling after every 2 conv layers
+    while building our model.
+  </p>
+  <pre><code class="language-python" id="code">
+class Modeld(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.model = nn.Sequential(
+        nn.Conv2d(3, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Flatten(),
+        nn.Linear(8*4*4, 32),
+        nn.ReLU(),
+        nn.Linear(32, 10)
+    )
+  def forward(self, x):
+    return self.model(x)          
+</code></pre>
+  <pre><code class="language-python" id="code">
+modeld = Modeld()
+modeld.to(device)
+summary(modeld, (3, 32, 32))        
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     ----------------------------------------------------------------
+                    Layer (type)               Output Shape         Param #
+            ================================================================
+                        Conv2d-1          [-1, 256, 32, 32]           7,168
+                          ReLU-2          [-1, 256, 32, 32]               0
+                        Conv2d-3          [-1, 256, 32, 32]         590,080
+                          ReLU-4          [-1, 256, 32, 32]               0
+                     MaxPool2d-5          [-1, 256, 16, 16]               0
+                        Conv2d-6          [-1, 128, 16, 16]         295,040
+                          ReLU-7          [-1, 128, 16, 16]               0
+                        Conv2d-8          [-1, 128, 16, 16]         147,584
+                          ReLU-9          [-1, 128, 16, 16]               0
+                    MaxPool2d-10            [-1, 128, 8, 8]               0
+                       Conv2d-11             [-1, 64, 8, 8]          73,792
+                         ReLU-12             [-1, 64, 8, 8]               0
+                       Conv2d-13             [-1, 64, 8, 8]          36,928
+                         ReLU-14             [-1, 64, 8, 8]               0
+                    MaxPool2d-15             [-1, 64, 4, 4]               0
+                       Conv2d-16             [-1, 32, 4, 4]          18,464
+                         ReLU-17             [-1, 32, 4, 4]               0
+                       Conv2d-18             [-1, 32, 4, 4]           9,248
+                         ReLU-19             [-1, 32, 4, 4]               0
+                    MaxPool2d-20             [-1, 32, 2, 2]               0
+                      Flatten-21                  [-1, 128]               0
+                       Linear-22                   [-1, 32]           4,128
+                         ReLU-23                   [-1, 32]               0
+                       Linear-24                   [-1, 10]             330
+            ================================================================
+            Total params: 1,182,762
+            Trainable params: 1,182,762
+            Non-trainable params: 0
+            ----------------------------------------------------------------
+            Input size (MB): 0.01
+            Forward/backward pass size (MB): 9.71
+            Params size (MB): 4.51
+            Estimated Total Size (MB): 14.24
+            ----------------------------------------------------------------            
+</code></pre>
+  <pre><code class="language-python" id="code">
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(modeld.parameters(), lr =0.001)
+
+train_batch(epochs=100,
+            model=modeld,
+            criterion=criterion,
+            optimizer=optimizer,
+            train_loader = train_loader)           
+</code></pre>
+  <pre><code class="language-plaintext" id="code5">
+Output:     Epoch: 0/100 Loss: 1.63681 Test Accuracy:  50.8800 %
+            Epoch: 1/100 Loss: 1.11160 Test Accuracy:  57.8900 %
+            Epoch: 2/100 Loss: 0.88377 Test Accuracy:  62.1567 %
+            Epoch: 3/100 Loss: 0.75571 Test Accuracy:  64.6625 %
+            Epoch: 4/100 Loss: 0.66311 Test Accuracy:  66.5320 %
+            Epoch: 5/100 Loss: 0.60238 Test Accuracy:  67.8300 %
+            Epoch: 6/100 Loss: 0.54715 Test Accuracy:  68.8986 %
+            Epoch: 7/100 Loss: 0.50416 Test Accuracy:  69.7275 %
+            Epoch: 8/100 Loss: 0.46374 Test Accuracy:  70.4800 %
+            Epoch: 9/100 Loss: 0.43625 Test Accuracy:  71.1130 %
+            Epoch: 10/100 Loss: 0.41187 Test Accuracy:  71.7036 %
+            Epoch: 11/100 Loss: 0.37618 Test Accuracy:  72.2008 %
+            Epoch: 12/100 Loss: 0.35975 Test Accuracy:  72.4746 %
+            Epoch: 13/100 Loss: 0.34434 Test Accuracy:  72.8936 %
+            Epoch: 14/100 Loss: 0.33104 Test Accuracy:  73.2327 %
+            Epoch: 15/100 Loss: 0.31342 Test Accuracy:  73.4938 %
+            Epoch: 16/100 Loss: 0.29623 Test Accuracy:  73.7371 %
+            Epoch: 17/100 Loss: 0.27876 Test Accuracy:  73.9872 %
+            Epoch: 18/100 Loss: 0.27496 Test Accuracy:  74.1874 %
+            Epoch: 19/100 Loss: 0.26701 Test Accuracy:  74.3410 %
+            Epoch: 20/100 Loss: 0.24952 Test Accuracy:  74.5105 %
+            Epoch: 21/100 Loss: 0.24642 Test Accuracy:  74.6268 %
+            Epoch: 22/100 Loss: 0.24149 Test Accuracy:  74.7674 %
+            Epoch: 23/100 Loss: 0.23258 Test Accuracy:  74.8371 %
+            Epoch: 24/100 Loss: 0.22263 Test Accuracy:  74.9492 %
+            Epoch: 25/100 Loss: 0.21200 Test Accuracy:  75.0615 %
+            Epoch: 26/100 Loss: 0.21417 Test Accuracy:  75.1811 %
+            Epoch: 27/100 Loss: 0.20851 Test Accuracy:  75.2707 %
+            Epoch: 28/100 Loss: 0.20109 Test Accuracy:  75.3448 %
+            Epoch: 29/100 Loss: 0.19732 Test Accuracy:  75.4523 %
+            Epoch: 30/100 Loss: 0.18857 Test Accuracy:  75.5174 %
+            Epoch: 31/100 Loss: 0.18396 Test Accuracy:  75.5812 %
+            Epoch: 32/100 Loss: 0.18698 Test Accuracy:  75.6252 %
+            Epoch: 33/100 Loss: 0.17938 Test Accuracy:  75.7003 %
+            Epoch: 34/100 Loss: 0.17706 Test Accuracy:  75.7454 %
+            Epoch: 35/100 Loss: 0.18325 Test Accuracy:  75.7756 %
+            Epoch: 36/100 Loss: 0.17802 Test Accuracy:  75.8162 %
+            Epoch: 37/100 Loss: 0.17371 Test Accuracy:  75.8705 %
+            Epoch: 38/100 Loss: 0.17265 Test Accuracy:  75.9123 %
+            Epoch: 39/100 Loss: 0.17385 Test Accuracy:  75.9262 %
+            Epoch: 40/100 Loss: 0.16924 Test Accuracy:  75.9798 %
+            Epoch: 41/100 Loss: 0.16235 Test Accuracy:  76.0038 %
+            Epoch: 42/100 Loss: 0.17718 Test Accuracy:  76.0730 %
+            Epoch: 43/100 Loss: 0.16733 Test Accuracy:  76.0998 %
+            Epoch: 44/100 Loss: 0.18762 Test Accuracy:  76.1540 %
+            Epoch: 45/100 Loss: 0.16083 Test Accuracy:  76.1915 %
+            Epoch: 46/100 Loss: 0.16148 Test Accuracy:  76.2411 %
+            Epoch: 47/100 Loss: 0.15977 Test Accuracy:  76.2958 %
+            Epoch: 48/100 Loss: 0.17630 Test Accuracy:  76.3237 %
+            Epoch: 49/100 Loss: 0.15590 Test Accuracy:  76.3500 %
+            Epoch: 50/100 Loss: 0.20417 Test Accuracy:  76.3831 %
+            Epoch: 51/100 Loss: 0.17623 Test Accuracy:  76.4121 %
+            Epoch: 52/100 Loss: 0.20541 Test Accuracy:  76.4517 %
+            Epoch: 53/100 Loss: 0.16314 Test Accuracy:  76.4796 %
+            Epoch: 54/100 Loss: 0.14642 Test Accuracy:  76.5155 %
+            Epoch: 55/100 Loss: 0.17090 Test Accuracy:  76.5277 %
+            Epoch: 56/100 Loss: 0.17192 Test Accuracy:  76.5325 %
+            Epoch: 57/100 Loss: 0.18429 Test Accuracy:  76.5634 %
+            Epoch: 58/100 Loss: 0.14283 Test Accuracy:  76.5937 %
+            Epoch: 59/100 Loss: 0.17134 Test Accuracy:  76.6147 %
+            Epoch: 60/100 Loss: 0.17160 Test Accuracy:  76.6449 %
+            Epoch: 61/100 Loss: 0.15898 Test Accuracy:  76.6668 %
+            Epoch: 62/100 Loss: 0.14664 Test Accuracy:  76.6956 %
+            Epoch: 63/100 Loss: 0.20769 Test Accuracy:  76.7175 %
+            Epoch: 64/100 Loss: 0.16106 Test Accuracy:  76.7498 %
+            Epoch: 65/100 Loss: 0.16267 Test Accuracy:  76.7780 %
+            Epoch: 66/100 Loss: 0.17197 Test Accuracy:  76.8097 %
+            Epoch: 67/100 Loss: 0.17143 Test Accuracy:  76.8210 %
+            Epoch: 68/100 Loss: 0.16020 Test Accuracy:  76.8445 %
+            Epoch: 69/100 Loss: 0.15963 Test Accuracy:  76.8743 %
+            Epoch: 70/100 Loss: 0.16113 Test Accuracy:  76.8686 %
+            Epoch: 71/100 Loss: 0.14775 Test Accuracy:  76.8811 %
+            Epoch: 72/100 Loss: 0.14973 Test Accuracy:  76.9000 %
+            Epoch: 73/100 Loss: 0.17600 Test Accuracy:  76.8911 %
+            Epoch: 74/100 Loss: 0.17887 Test Accuracy:  76.8957 %
+            Epoch: 75/100 Loss: 0.20886 Test Accuracy:  76.9174 %
+            Epoch: 76/100 Loss: 0.19297 Test Accuracy:  76.9196 %
+            Epoch: 77/100 Loss: 0.16492 Test Accuracy:  76.9241 %
+            Epoch: 78/100 Loss: 0.18369 Test Accuracy:  76.9463 %
+            Epoch: 79/100 Loss: 0.14155 Test Accuracy:  76.9304 %
+            Epoch: 80/100 Loss: 0.17279 Test Accuracy:  76.9460 %
+            Epoch: 81/100 Loss: 0.18301 Test Accuracy:  76.9713 %
+            Epoch: 82/100 Loss: 0.22270 Test Accuracy:  76.9780 %
+            Epoch: 83/100 Loss: 0.15867 Test Accuracy:  76.9861 %
+            Epoch: 84/100 Loss: 0.17754 Test Accuracy:  76.9951 %
+            Epoch: 85/100 Loss: 0.14597 Test Accuracy:  77.0129 %
+            Epoch: 86/100 Loss: 0.18033 Test Accuracy:  77.0353 %
+            Epoch: 87/100 Loss: 0.24643 Test Accuracy:  77.0536 %
+            Epoch: 88/100 Loss: 0.14251 Test Accuracy:  77.0440 %
+            Epoch: 89/100 Loss: 0.13328 Test Accuracy:  77.0582 %
+            Epoch: 90/100 Loss: 0.17563 Test Accuracy:  77.0607 %
+            Epoch: 91/100 Loss: 0.23723 Test Accuracy:  77.0665 %
+            Epoch: 92/100 Loss: 0.18568 Test Accuracy:  77.0823 %
+            Epoch: 93/100 Loss: 0.24909 Test Accuracy:  77.0848 %
+            Epoch: 94/100 Loss: 0.18678 Test Accuracy:  77.0997 %
+            Epoch: 95/100 Loss: 0.14890 Test Accuracy:  77.0653 %
+            Epoch: 96/100 Loss: 0.20515 Test Accuracy:  77.0878 %
+            Epoch: 97/100 Loss: 0.18718 Test Accuracy:  77.0952 %
+            Epoch: 98/100 Loss: 0.29539 Test Accuracy:  77.1140 %
+            Epoch: 99/100 Loss: 0.14085 Test Accuracy:  77.1312 %          
+</code></pre>
+  <pre><code class="language-python" id="code">
+import matplotlib.pyplot as plt
+plot_d = plt.figure(figsize=(12, 2.5), dpi=200)
+
+plt.subplot(1, 2, 1)
+plt.plot(loss_per_iteration)
+plt.title('Loss vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('CrossEntropyLoss')
+
+plt.subplot(1, 2, 2)
+plot = plt.plot(accuracy_per_iteration)
+plt.title('Test Accuracy vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Test Accuracy (%)')
+
+plt.suptitle("Model d")
+plt.show()           
+</code></pre>
+  <img src="images/modeld.png" alt="" class="img5" />
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in train_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modeld(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item() 
+
+print(f'Accuracy of the network on the 50000 train images: {100 * correct / total} %')
+print(f'Correct {correct}')           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 50000 train images: 96.974 %
+            Correct 48487           
+</code></pre>
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in test_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modeld(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item() 
+    from sklearn.metrics import f1_score   
+    f1_score = f1_score(labels.cpu(), predicted.cpu(), average='micro') 
+
+print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
+print(f'f1_score: {f1_score}')          
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 10000 test images: 78.83 %
+            f1_score: 0.75          
+</code></pre>
+  <p class="para18">
+    <b
+      >Modeld achieves a train accuracy of 96.974% and a test accuracy of
+      78.83%, seems like our model is going in the right direction! MaxPooling
+      defintely helped our model to learn the most Significant features (like
+      the edges of a car), the max. no. of maxpooling layers we can use are 5
+      becaue each maxpool layer reduces the size of our image by (2x2) and our
+      images are of size 32X32, the minimum to which it can get is 1x1, which is
+      like 5 x maxpooling. <br />
+      We opt for 100 epochs, because our model has the capability to improve
+      itself to that extent and that is determined by hit and trial where you
+      just keep the model training until you observe that the learning curve
+      does not improve further. Modeld at 1.18 Million parameters has more
+      potential for a better accuracy so lets preserve this model architecture
+      and try something different to get a better result out of it.
+    </b>
+  </p>
+  <br />
+  <!-- ===================================================================== -->
+  <h3 class="head6">The power of Augmentation (Modele)</h3>
+  <p class="para19">
+    Modele has the same architecture as Modeld but now we modify the data we
+    feed to it for training. We "augment" the data, augmentation means to
+    transform the data, like we transformed our data to tensors to feed it to
+    our network, we change the appearamce of the images that our model trains
+    on, a bit. Lets visualize the two types of transforms we are going to use on
+    our images.
+  </p>
+  <pre><code class="language-python" id="code">
+#Modeld but on AUGMENTED IMAGES
+class Modele(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.model = nn.Sequential(
+        nn.Conv2d(3, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Flatten(),
+        nn.Linear(8*4*4, 32),
+        nn.ReLU(),
+        nn.Linear(32, 10)
+    )
+  def forward(self, x):
+    return self.model(x)           
+</code></pre>
+  <pre><code class="language-python" id="code">
+modele = Modele()
+modele.to(device)
+summary(modele, (3, 32, 32))          
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     ----------------------------------------------------------------
+                    Layer (type)               Output Shape         Param #
+            ================================================================
+                        Conv2d-1          [-1, 256, 32, 32]           7,168
+                          ReLU-2          [-1, 256, 32, 32]               0
+                        Conv2d-3          [-1, 256, 32, 32]         590,080
+                          ReLU-4          [-1, 256, 32, 32]               0
+                     MaxPool2d-5          [-1, 256, 16, 16]               0
+                        Conv2d-6          [-1, 128, 16, 16]         295,040
+                          ReLU-7          [-1, 128, 16, 16]               0
+                        Conv2d-8          [-1, 128, 16, 16]         147,584
+                          ReLU-9          [-1, 128, 16, 16]               0
+                    MaxPool2d-10            [-1, 128, 8, 8]               0
+                       Conv2d-11             [-1, 64, 8, 8]          73,792
+                         ReLU-12             [-1, 64, 8, 8]               0
+                       Conv2d-13             [-1, 64, 8, 8]          36,928
+                         ReLU-14             [-1, 64, 8, 8]               0
+                    MaxPool2d-15             [-1, 64, 4, 4]               0
+                       Conv2d-16             [-1, 32, 4, 4]          18,464
+                         ReLU-17             [-1, 32, 4, 4]               0
+                       Conv2d-18             [-1, 32, 4, 4]           9,248
+                         ReLU-19             [-1, 32, 4, 4]               0
+                    MaxPool2d-20             [-1, 32, 2, 2]               0
+                      Flatten-21                  [-1, 128]               0
+                       Linear-22                   [-1, 32]           4,128
+                         ReLU-23                   [-1, 32]               0
+                       Linear-24                   [-1, 10]             330
+            ================================================================
+            Total params: 1,182,762
+            Trainable params: 1,182,762
+            Non-trainable params: 0
+            ----------------------------------------------------------------
+            Input size (MB): 0.01
+            Forward/backward pass size (MB): 9.71
+            Params size (MB): 4.51
+            Estimated Total Size (MB): 14.24
+            ----------------------------------------------------------------           
+</code></pre>
+  <p class="para20">
+    First transform we apply to our data(images) is RandomCrop(32), 32 standing
+    for the output size (32x32), RandomCrop crops random pixels of the image,
+    which helps our model to identify pictures of each class even if they are
+    not completely visible, its like showing our model same images but in a
+    different way so that it can even identify the pattern in some complex
+    appearing images.
+  </p>
+  <pre><code class="language-python" id="code">
+x = random.randint(0, 10000)
+img, label = test_data[x]
+print(img.shape)
+plt.imshow(img.permute(1, 2, 0))
+print(f'label : {classes[label]}')
+print(f'label index : {label}')
+print(f'Showing img {x}')
+
+transform = transforms.Compose([
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),         
+                                             (0.247, 0.243, 0.261)),            
+                        transforms.RandomCrop(32)])
+img_sample = transform(img).to(device)
+
+plt.subplot(121)
+plt.title('original image')
+plt.imshow(img.permute(1, 2, 0))
+
+plt.subplot(122)
+plt.title('after random crop')
+plt.imshow(img_sample.permute(1, 2, 0))
+plt.show()
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     
+
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+torch.Size([3, 32, 32])
+label : truck
+label index : 9
+Showing img 9667  
+</code></pre>
+  <img src="images/randomcrop.png" alt="" class="img9" />
+  <p class="para21">
+    The other transform we apply to our data is RandomHorizontalFlip(), p
+    standing for the probability whether the image is flipped horizontally or
+    not, deault is 0.5. RandomHorizontalFlip flips the images horizontally at
+    random.
+    <br />Augmenting data allows us to basically create more data in the same
+    amount of data and introduces our model to these irregular images, so that
+    they can also be identified and classified correctly, augmentation always
+    adds to the performance to our model, augmentation creates diversity within
+    our existing data, so should be applied while preprocessing the data.
+  </p>
+  <pre><code class="language-python" id="code">
+x = random.randint(0, 10000)
+img, label = test_data[x]
+print(img.shape)
+plt.imshow(img.permute(1, 2, 0))
+print(f'label : {classes[label]}')
+print(f'label index : {label}')
+print(f'Showing img {x}')
+
+transform = transforms.Compose([
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),         
+                                             (0.247, 0.243, 0.261)),            
+                        transforms.RandomHorizontalFlip(p=1),
+                        transforms.RandomCrop(32)])
+img_sample = transform(img).to(device)
+
+plt.subplot(121)
+plt.title('original image')
+plt.imshow(img.permute(1, 2, 0))
+
+plt.subplot(122)
+plt.title('after horizontal flip and randomcrop')
+plt.imshow(img_sample.permute(1, 2, 0))
+plt.show()  
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     
+
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+torch.Size([3, 32, 32])
+label : bird
+label index : 2
+Showing img 6427  
+</code></pre>
+  <img src="images/hflip.png" alt="" class="img10" />
+  <pre><code class="language-python" id="code">
+data_path = '/data'
+train_data = datasets.CIFAR10(data_path, train = True, download = True,
+                              transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),         
+                                             (0.247, 0.243, 0.261)),            
+                        transforms.RandomCrop(32),
+                        transforms.RandomHorizontalFlip(),
+
+    
+    ]))
+test_data = datasets.CIFAR10(data_path, train = False, download = True,
+                              transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),          
+                                             (0.247, 0.243, 0.261)),             
+                        transforms.RandomCrop(32),
+                        transforms.RandomHorizontalFlip(),
+
+    
+    ]))            
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Files already downloaded and verified
+            Files already downloaded and verified           
+</code></pre>
+  <pre><code class="language-python" id="code">
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, shuffle=True)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(modele.parameters(), lr =0.001)
+
+train_batch(epochs=150,
+            model=modele,
+            criterion=criterion,
+            optimizer=optimizer,
+            train_loader = train_loader)           
+</code></pre>
+  <pre><code class="language-python" id="code6">
+Output:     Epoch: 0/150 Loss: 1.67275 Test Accuracy:  50.8600 %
+            Epoch: 1/150 Loss: 1.18450 Test Accuracy:  54.4700 %
+            Epoch: 2/150 Loss: 0.95826 Test Accuracy:  58.5133 %
+            Epoch: 3/150 Loss: 0.82974 Test Accuracy:  61.8775 %
+            Epoch: 4/150 Loss: 0.75072 Test Accuracy:  64.2160 %
+            Epoch: 5/150 Loss: 0.68567 Test Accuracy:  65.9083 %
+            Epoch: 6/150 Loss: 0.64663 Test Accuracy:  67.4514 %
+            Epoch: 7/150 Loss: 0.60331 Test Accuracy:  68.6150 %
+            Epoch: 8/150 Loss: 0.57754 Test Accuracy:  69.5422 %
+            Epoch: 9/150 Loss: 0.54932 Test Accuracy:  70.3040 %
+            Epoch: 10/150 Loss: 0.52277 Test Accuracy:  71.0082 %
+            Epoch: 11/150 Loss: 0.50418 Test Accuracy:  71.5058 %
+            Epoch: 12/150 Loss: 0.49144 Test Accuracy:  72.0685 %
+            Epoch: 13/150 Loss: 0.47329 Test Accuracy:  72.5121 %
+            Epoch: 14/150 Loss: 0.45905 Test Accuracy:  72.9520 %
+            Epoch: 15/150 Loss: 0.44669 Test Accuracy:  73.3388 %
+            Epoch: 16/150 Loss: 0.43156 Test Accuracy:  73.7206 %
+            Epoch: 17/150 Loss: 0.42156 Test Accuracy:  73.9961 %
+            Epoch: 18/150 Loss: 0.40934 Test Accuracy:  74.3000 %
+            Epoch: 19/150 Loss: 0.39768 Test Accuracy:  74.6045 %
+            Epoch: 20/150 Loss: 0.38955 Test Accuracy:  74.8667 %
+            Epoch: 21/150 Loss: 0.37635 Test Accuracy:  75.1264 %
+            Epoch: 22/150 Loss: 0.37059 Test Accuracy:  75.3809 %
+            Epoch: 23/150 Loss: 0.35800 Test Accuracy:  75.6417 %
+            Epoch: 24/150 Loss: 0.35460 Test Accuracy:  75.8220 %
+            Epoch: 25/150 Loss: 0.34646 Test Accuracy:  75.9950 %
+            Epoch: 26/150 Loss: 0.33539 Test Accuracy:  76.1622 %
+            Epoch: 27/150 Loss: 0.33569 Test Accuracy:  76.3025 %
+            Epoch: 28/150 Loss: 0.33428 Test Accuracy:  76.4859 %
+            Epoch: 29/150 Loss: 0.31853 Test Accuracy:  76.6390 %
+            Epoch: 30/150 Loss: 0.30988 Test Accuracy:  76.7832 %
+            Epoch: 31/150 Loss: 0.31896 Test Accuracy:  76.9412 %
+            Epoch: 32/150 Loss: 0.30808 Test Accuracy:  77.0645 %
+            Epoch: 33/150 Loss: 0.30667 Test Accuracy:  77.1974 %
+            Epoch: 34/150 Loss: 0.29622 Test Accuracy:  77.3346 %
+            Epoch: 35/150 Loss: 0.28899 Test Accuracy:  77.4494 %
+            Epoch: 36/150 Loss: 0.29628 Test Accuracy:  77.5473 %
+            Epoch: 37/150 Loss: 0.27985 Test Accuracy:  77.6147 %
+            Epoch: 38/150 Loss: 0.28353 Test Accuracy:  77.6890 %
+            Epoch: 39/150 Loss: 0.27714 Test Accuracy:  77.7917 %
+            Epoch: 40/150 Loss: 0.28321 Test Accuracy:  77.8790 %
+            Epoch: 41/150 Loss: 0.28207 Test Accuracy:  77.9767 %
+            Epoch: 42/150 Loss: 0.25751 Test Accuracy:  78.0691 %
+            Epoch: 43/150 Loss: 0.27801 Test Accuracy:  78.1536 %
+            Epoch: 44/150 Loss: 0.26800 Test Accuracy:  78.2360 %
+            Epoch: 45/150 Loss: 0.26038 Test Accuracy:  78.3020 %
+            Epoch: 46/150 Loss: 0.26183 Test Accuracy:  78.3781 %
+            Epoch: 47/150 Loss: 0.24725 Test Accuracy:  78.4615 %
+            Epoch: 48/150 Loss: 0.24887 Test Accuracy:  78.5124 %
+            Epoch: 49/150 Loss: 0.25242 Test Accuracy:  78.5714 %
+            Epoch: 50/150 Loss: 0.25707 Test Accuracy:  78.6290 %
+            Epoch: 51/150 Loss: 0.26798 Test Accuracy:  78.6869 %
+            Epoch: 52/150 Loss: 0.25629 Test Accuracy:  78.7428 %
+            Epoch: 53/150 Loss: 0.22998 Test Accuracy:  78.7794 %
+            Epoch: 54/150 Loss: 0.24394 Test Accuracy:  78.8333 %
+            Epoch: 55/150 Loss: 0.23866 Test Accuracy:  78.8762 %
+            Epoch: 56/150 Loss: 0.26580 Test Accuracy:  78.9167 %
+            Epoch: 57/150 Loss: 0.26328 Test Accuracy:  78.9578 %
+            Epoch: 58/150 Loss: 0.23052 Test Accuracy:  79.0110 %
+            Epoch: 59/150 Loss: 0.22291 Test Accuracy:  79.0607 %
+            Epoch: 60/150 Loss: 0.23383 Test Accuracy:  79.1011 %
+            Epoch: 61/150 Loss: 0.23374 Test Accuracy:  79.1276 %
+            Epoch: 62/150 Loss: 0.23442 Test Accuracy:  79.1784 %
+            Epoch: 63/150 Loss: 0.26033 Test Accuracy:  79.2214 %
+            Epoch: 64/150 Loss: 0.25683 Test Accuracy:  79.2566 %
+            Epoch: 65/150 Loss: 0.22702 Test Accuracy:  79.2955 %
+            Epoch: 66/150 Loss: 0.24574 Test Accuracy:  79.3216 %
+            Epoch: 67/150 Loss: 0.23827 Test Accuracy:  79.3653 %
+            Epoch: 68/150 Loss: 0.21734 Test Accuracy:  79.3581 %
+            Epoch: 69/150 Loss: 0.22972 Test Accuracy:  79.3720 %
+            Epoch: 70/150 Loss: 0.22386 Test Accuracy:  79.4115 %
+            Epoch: 71/150 Loss: 0.27092 Test Accuracy:  79.4524 %
+            Epoch: 72/150 Loss: 0.22026 Test Accuracy:  79.4653 %
+            Epoch: 73/150 Loss: 0.21540 Test Accuracy:  79.5064 %
+            Epoch: 74/150 Loss: 0.22358 Test Accuracy:  79.5396 %
+            Epoch: 75/150 Loss: 0.23527 Test Accuracy:  79.5699 %
+            Epoch: 76/150 Loss: 0.21926 Test Accuracy:  79.5378 %
+            Epoch: 77/150 Loss: 0.25465 Test Accuracy:  79.5669 %
+            Epoch: 78/150 Loss: 0.21061 Test Accuracy:  79.6034 %
+            Epoch: 79/150 Loss: 0.26570 Test Accuracy:  79.6282 %
+            Epoch: 80/150 Loss: 0.22719 Test Accuracy:  79.6530 %
+            Epoch: 81/150 Loss: 0.20123 Test Accuracy:  79.6699 %
+            Epoch: 82/150 Loss: 0.21162 Test Accuracy:  79.6925 %
+            Epoch: 83/150 Loss: 0.20389 Test Accuracy:  79.7046 %
+            Epoch: 84/150 Loss: 0.23721 Test Accuracy:  79.7304 %
+            Epoch: 85/150 Loss: 0.22477 Test Accuracy:  79.7564 %
+            Epoch: 86/150 Loss: 0.27319 Test Accuracy:  79.7552 %
+            Epoch: 87/150 Loss: 0.20219 Test Accuracy:  79.7839 %
+            Epoch: 88/150 Loss: 0.20707 Test Accuracy:  79.8161 %
+            Epoch: 89/150 Loss: 0.27506 Test Accuracy:  79.8427 %
+            Epoch: 90/150 Loss: 0.21641 Test Accuracy:  79.8696 %
+            Epoch: 91/150 Loss: 0.20129 Test Accuracy:  79.8930 %
+            Epoch: 92/150 Loss: 0.26840 Test Accuracy:  79.9231 %
+            Epoch: 93/150 Loss: 0.19152 Test Accuracy:  79.9394 %
+            Epoch: 94/150 Loss: 0.22233 Test Accuracy:  79.9529 %
+            Epoch: 95/150 Loss: 0.19919 Test Accuracy:  79.9793 %
+            Epoch: 96/150 Loss: 0.29677 Test Accuracy:  80.0015 %
+            Epoch: 97/150 Loss: 0.21284 Test Accuracy:  80.0165 %
+            Epoch: 98/150 Loss: 0.22971 Test Accuracy:  80.0375 %
+            Epoch: 99/150 Loss: 0.22240 Test Accuracy:  80.0602 %
+            Epoch: 100/150 Loss: 0.20754 Test Accuracy:  80.0777 %
+            Epoch: 101/150 Loss: 0.24159 Test Accuracy:  80.0811 %
+            Epoch: 102/150 Loss: 0.20963 Test Accuracy:  80.1063 %
+            Epoch: 103/150 Loss: 0.21062 Test Accuracy:  80.1302 %
+            Epoch: 104/150 Loss: 0.22725 Test Accuracy:  80.1470 %
+            Epoch: 105/150 Loss: 0.21377 Test Accuracy:  80.1635 %
+            Epoch: 106/150 Loss: 0.22553 Test Accuracy:  80.1899 %
+            Epoch: 107/150 Loss: 0.19229 Test Accuracy:  80.2042 %
+            Epoch: 108/150 Loss: 0.22819 Test Accuracy:  80.2173 %
+            Epoch: 109/150 Loss: 0.19435 Test Accuracy:  80.2393 %
+            Epoch: 110/150 Loss: 0.21668 Test Accuracy:  80.2556 %
+            Epoch: 111/150 Loss: 0.19994 Test Accuracy:  80.2667 %
+            Epoch: 112/150 Loss: 0.24186 Test Accuracy:  80.2779 %
+            Epoch: 113/150 Loss: 0.20419 Test Accuracy:  80.2977 %
+            Epoch: 114/150 Loss: 0.21033 Test Accuracy:  80.3183 %
+            Epoch: 115/150 Loss: 0.26494 Test Accuracy:  80.3333 %
+            Epoch: 116/150 Loss: 0.23510 Test Accuracy:  80.3456 %
+            Epoch: 117/150 Loss: 0.31311 Test Accuracy:  80.3610 %
+            Epoch: 118/150 Loss: 0.19931 Test Accuracy:  80.3827 %
+            Epoch: 119/150 Loss: 0.19413 Test Accuracy:  80.3942 %
+            Epoch: 120/150 Loss: 0.23167 Test Accuracy:  80.4068 %
+            Epoch: 121/150 Loss: 0.24341 Test Accuracy:  80.4239 %
+            Epoch: 122/150 Loss: 0.24256 Test Accuracy:  80.4410 %
+            Epoch: 123/150 Loss: 0.20458 Test Accuracy:  80.4535 %
+            Epoch: 124/150 Loss: 0.19526 Test Accuracy:  80.4670 %
+            Epoch: 125/150 Loss: 0.26016 Test Accuracy:  80.4718 %
+            Epoch: 126/150 Loss: 0.25392 Test Accuracy:  80.4935 %
+            Epoch: 127/150 Loss: 0.19577 Test Accuracy:  80.5118 %
+            Epoch: 128/150 Loss: 0.19712 Test Accuracy:  80.5179 %
+            Epoch: 129/150 Loss: 0.42453 Test Accuracy:  80.5107 %
+            Epoch: 130/150 Loss: 0.28204 Test Accuracy:  80.5200 %
+            Epoch: 131/150 Loss: 0.22940 Test Accuracy:  80.5300 %
+            Epoch: 132/150 Loss: 0.26024 Test Accuracy:  80.5322 %
+            Epoch: 133/150 Loss: 0.20654 Test Accuracy:  80.5399 %
+            Epoch: 134/150 Loss: 0.35317 Test Accuracy:  80.5503 %
+            Epoch: 135/150 Loss: 0.21117 Test Accuracy:  80.5585 %
+            Epoch: 136/150 Loss: 0.22638 Test Accuracy:  80.5768 %
+            Epoch: 137/150 Loss: 0.18189 Test Accuracy:  80.5892 %
+            Epoch: 138/150 Loss: 0.28279 Test Accuracy:  80.5969 %
+            Epoch: 139/150 Loss: 0.39123 Test Accuracy:  80.5966 %
+            Epoch: 140/150 Loss: 0.21698 Test Accuracy:  80.6092 %
+            Epoch: 141/150 Loss: 0.18045 Test Accuracy:  80.6194 %
+            Epoch: 142/150 Loss: 0.38402 Test Accuracy:  80.6298 %
+            Epoch: 143/150 Loss: 0.29744 Test Accuracy:  80.6443 %
+            Epoch: 144/150 Loss: 0.23733 Test Accuracy:  80.6577 %
+            Epoch: 145/150 Loss: 0.19393 Test Accuracy:  80.6628 %
+            Epoch: 146/150 Loss: 0.34253 Test Accuracy:  80.6765 %
+            Epoch: 147/150 Loss: 0.35395 Test Accuracy:  80.6796 %
+            Epoch: 148/150 Loss: 0.25382 Test Accuracy:  80.6754 %
+            Epoch: 149/150 Loss: 0.24334 Test Accuracy:  80.6789 %           
+        </code></pre>
+  <p class="para22">
+    We reached 70% test accuracy in just 10 epochs, because of augmentation. We
+    trained the model for 150 epochs as it was still improving till 150 epochs
+    and showing test accuracy fluctuations after 140 epochs. The learning
+    process becomes slow here, so we set 150 epochs for the model to train. You
+    can certainly experiment with number of epochs as the same model may give
+    different results every time, so its a good practice to set the epochs
+    higher than your choice and you can still stop the training in between if
+    you see the loss getting higher constantly.
+  </p>
+  <pre><code class="language-python" id="code">
+plot_e = plt.figure(figsize=(12, 2.5), dpi=200)
+      
+plt.subplot(1, 2, 1)
+plt.plot(loss_per_iteration)
+plt.title('Loss vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('CrossEntropyLoss')
+
+plt.subplot(1, 2, 2)
+plot = plt.plot(accuracy_per_iteration)
+plt.title('Test Accuracy vs Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Test Accuracy (%)')
+
+plt.suptitle("Model e")
+plt.show()         
+</code></pre>
+  <img src="images/modele.png" alt="" class="img6" />
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in test_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modele(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item() 
+    from sklearn.metrics import f1_score   
+    f1_score = f1_score(labels.cpu(), predicted.cpu(), average='micro') 
+
+print(f'Accuracy of the network on the 10000 test images: {100 * correct / total} %')
+print(f'f1_score: {f1_score}')           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 10000 test images: 81.21 %
+            f1_score: 0.8125          
+</code></pre>
+  <pre><code class="language-python" id="code">
+total = 0
+correct = 0 
+with torch.no_grad():
+  for data in train_loader:
+    inputs, labels = data
+    inputs, labels = inputs.to(device), labels.to(device)
+    outputs = modele(inputs)
+    _, predicted = torch.max(outputs, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item() 
+
+print(f'Accuracy of the network on the 50000 train images: {100 * correct / total} %')
+print(f'Correct {correct}')          
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Accuracy of the network on the 50000 train images: 93.852 %
+Correct 46926          
+</code></pre>
+  <p class="para23">
+    Modele acheieved a train accuracy of 93.852% and test accuracy of 81.21% ,
+    from our basline 65% accuracy model to 81.2%, there were a lot of learnings
+    on the way uphill. There is absolutely no limit to your experiments, you
+    will understand how we achieved this when you train your own models and try
+    out that question "What happens if I-". So go ahead and run the
+    <a
+      href="https://colab.research.google.com/drive/18QdCMurLp5DViBKni_wS7OR0IMeYVpvf?usp=sharing"
+      target="blank"
+      >Colab notebook</a
+    >, but with your own modifications in the models.
+  </p>
+  <br />
+  <h3 class="head10">Saving our best performing Model</h3>
+  <pre><code class="language-plaintext" id="code">
+saved_path = './saved_model812'
+torch.save(modele, saved_path)    
+</code></pre>
+  <p class="para34">
+    After saving the model, access the 'Files' section of Colab to find your
+    'savedmodel812' there and click on the 3 dots and click Download.
+  </p>
+  <br />
+  <h3 class="head7">Testing our network on images from the internet</h3>
+  <p class="para24">
+    Now what if we have to test our model on an image taken from the internet?
+    lets test it out. <br />
+    For that we take the first ship image from google images and open it using
+    Image attribute of PIL (Python image library) to open it in our notebook and
+    resize it to 32x32 to pass it through our model and save it as a new image.
+    <br />
+    After saving image we open it in our notebook using the Image attribute and
+    normalize it with the same values we used before. <br />
+    To pass the image through our model it should be in the form of a mini-batch
+    so we add another dimension (1) to it and move it to 'device'. Moving to
+    device is important as our model, image should all be on the same device for
+    passing the image through our model. <br />We print the probabilities of all
+    the classes which our model thinks the image belongs to, plt.imshow()
+    requires an image on the cpu to be printed so we use .cpu() for printing the
+    image and yes its a ship! Success!
+  </p>
+  <pre><code class="language-python" id="code">
+from PIL import Image
+img = Image.open('/shipimage32.jpeg')           
+</code></pre>
+  <pre><code class="language-python" id="code">
+transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),          
+                                             (0.247, 0.243, 0.261))])          
+img = transform(img)
+img_sample = img.to(device)
+img_sample.shape            
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     torch.Size([3, 32, 32])        
+</code></pre>
+  <pre><code class="language-python" id="code">
+img_sample = img_sample.view(1, 3, 32, 32).to(device)
+img_sample.to(device)
+output = modele(img_sample)
+_, prediction = torch.max(output, 1)
+print(f'Input sample image size: {img_sample.shape}')
+print(f'Predicted class probabilities: {output}')
+print(f'Predicted class index: {prediction}')
+print(f'Predicted class: {classes[prediction]}')
+plt.imshow(img.cpu().permute(1, 2, 0))
+plt.show()           
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output: 
+
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+Input sample image size: torch.Size([1, 3, 32, 32])
+Predicted class probabilities: tensor([[58.0545, 65.5741, 33.7923, 48.5003, 12.0583, 11.4369, 16.2597, 36.1407,
+82.4218, 46.1181]], device='cuda:0', grad_fn= AddmmBackward0 )
+Predicted class index: tensor([8], device='cuda:0')
+Predicted class: ship          
+</code></pre>
+  <img src="images/shipoutput.png" alt="" class="img7" /><br /><br />
+  <h3 class="head8">Making a Confusion Matrix</h3>
+  <p class="para25">
+    When we tested Model e on the 10000 test images, we achieved 81.21% meaning
+    that our model predicted the correct classes for 8121 out of 10000 images.
+    But the remaining 1879 were also assigned a class, but they were not
+    predicted the correct class for. A Confusion Matrix gives us a view of where
+    our model "confuses", for example how many images of the class 'dog' have
+    been predicted as a 'cat' 'truck' 'airplane'..etc.
+    <br />The code for a confusion matrix is very simple, first we create a
+    confusion_matrix of 10x10 dimension (as we have 10 classes) containing
+    zeros. As we dont need the gradient calculation for making a confusion
+    matrix, we turn gradient calculation off and calculate our model's
+    predictions the way when we calculated accuracy. Then we use 'zip' to map
+    the actual label index to the predicted index like a correctly predicted
+    ship image will be zipped as (8, 8). After making a collection of the
+    predicted label index and actual label index, we add a 1 to the cell in the
+    confusion matrix where our (actual label, predicted label) are. For example,
+    for a correcrtly predicted image of ship a +1 would be added to the (8, 8)
+    position in our 10x10 matrix.
+    <br />
+  </p>
+  <pre><code class="language-python" id="code">
+classes = 10
+confusion_matrix = torch.zeros(classes, classes)
+with torch.no_grad():
+  for i, (inputs, labels) in enumerate(test_loader):
+    inputs = inputs.to(device)
+    labels = labels.to(device)
+    outputs = modelb(inputs)
+    _, predictions = torch.max(outputs, 1)
+    for j, k in zip(labels.view(-1), predictions.view(-1)):
+      confusion_matrix[j.long(), k.long()] =  confusion_matrix[j.long(), k.long()] + 1
+
+print(confusion_matrix)         
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     tensor([[825.,  15.,  31.,   9.,   8.,   5.,   3.,  10.,  55.,  39.],
+                    [ 13., 890.,   4.,   3.,   0.,   1.,   3.,   0.,  15.,  71.],
+                    [ 44.,   1., 704.,  45.,  50.,  59.,  56.,  16.,   6.,  19.],
+                    [ 14.,   3.,  52., 657.,  46., 128.,  42.,  14.,   4.,  40.],
+                    [ 12.,   1.,  53.,  44., 773.,  28.,  37.,  38.,   7.,   7.],
+                    [  5.,   0.,  32., 112.,  26., 777.,   7.,  27.,   2.,  12.],
+                    [  3.,   3.,  42.,  41.,  18.,  19., 858.,   1.,   4.,  11.],
+                    [ 14.,   3.,  20.,  31.,  27.,  46.,   3., 833.,   0.,  23.],
+                    [ 38.,  19.,  11.,   8.,   1.,   1.,   2.,   0., 884.,  36.],
+                    [ 18.,  31.,   5.,   4.,   2.,   1.,   1.,   2.,  16., 920.]])          
+</code></pre>
+  <p class="para26">
+    So now we have our Confusion Matrix, lets use seaborn to visualise it
+    beautifully by plotting a seaborn heatmap.
+    <br />We set the figure size to 16x12 inches as to get a good size plot, We
+    plot a heatmap using sns.heatmap and give input as our confusion_matrix
+    tensor that we made, annot='True' prints the values in each cell of the
+    plot, fmt='g' is format = general which formats the string to print the
+    entire values in each cell of the heatmap. <br />Then we set the ticklabels
+    for the x and y axes. sns.despine() is used to remove the spine of the plot
+    (the graph print info).
+  </p>
+  <pre><code class="language-python" id="code">
+import seaborn as sns
+sns.set(rc={'figure.figsize':(16, 12)})
+cm = sns.heatmap(confusion_matrix, annot=True, fmt='g')
+cm.set(xticklabels=['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck'])
+cm.set(yticklabels=['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck'])
+sns.despine()      
+</code></pre>
+  <img src="images/confusionmatrix.png" alt="" class="img11" />
+  <!-- ================================================================ -->
+  <br /><br /><br />
+  <h3 class="head9">
+    Loading and making predictions with our downloaded model e
+  </h3>
+  <br />
+  <p class="para27">
+    Since we saved and downloaded our Model e, we can make predictions using
+    that modele file that we downloaded anywhere externally. The code under this
+    heading can be run <i>independently</i> to make a prediction using the saved
+    model file. <br />
+    <a
+      href="https://drive.google.com/uc?export=download&id=1NTpoZ6Y-Wi2eH0UEoKNFgDlTEf0juyxc"
+      >Download trained Model e here</a
+    >
+    <br><a
+      href="https://www.google.com/imgres?imgurl=https://www.extremetech.com/wp-content/uploads/2019/12/SONATA-hero-option1-764A5360-edit-640x354.jpg&imgrefurl=https://www.extremetech.com/extreme/303740-car-of-the-year-extremetechs-best-cars-for-2020&tbnid=iPMM1QLXjD0LzM&vet=1&docid=WRUkA1xe_6Tf7M&w=640&h=354&source=sh/x/im"
+      >Car image used here</a
+    >
+  </p>
+
+  <pre><code class="language-python" id="code">
+import torch.nn as nn
+import torch            
+</code></pre>
+  <pre><code class="language-python" id="code">
+class Modele(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.model = nn.Sequential(
+        nn.Conv2d(3, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+        nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+        nn.ReLU(),
+        nn.MaxPool2d(2),
+
+        nn.Flatten(),
+        nn.Linear(8*4*4, 32),
+        nn.ReLU(),
+        nn.Linear(32, 10)
+    )
+  def forward(self, x):
+    return self.model(x)           
+</code></pre>
+  <pre><code class="language-python" id="code">
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")          
+</code></pre>
+  <p class="para28">
+    Defining the model we saved, moving it to 'device' (GPU/CPU) and load its
+    state_dict (which is a collection of weights and biases of every layers that
+    the model has learned), map_location = 'cpu' maps the model to cpu incase we
+    are not connected to the gpu, it converts the saved file to run on CPU,
+    model.eval() sets the mode to evaulation mode for making predictions on the
+    model.
+  </p>
+  <pre><code class="language-python" id="code">
+model = Modele()
+model.to(device)
+model.load_state_dict(torch.load('/content/saved_model812', map_location=torch.device('cpu')))
+model.eval()         
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:     Modele(
+            (model): Sequential(
+                (0): Conv2d(3, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (1): ReLU()
+                (2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (3): ReLU()
+                (4): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (5): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (6): ReLU()
+                (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (8): ReLU()
+                (9): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (10): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (11): ReLU()
+                (12): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (13): ReLU()
+                (14): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (15): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (16): ReLU()
+                (17): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+                (18): ReLU()
+                (19): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+                (20): Flatten(start_dim=1, end_dim=-1)
+                (21): Linear(in_features=128, out_features=32, bias=True)
+                (22): ReLU()
+                (23): Linear(in_features=32, out_features=10, bias=True)
+            )
+            )           
+</code></pre>
+  <p class="para29">
+    Now we open a car image using the Image attribute of PIL, then convert it to
+    32x32 size to pass it through our model by using .resize attribute of Image
+    and then save it in Colab Files.
+  </p>
+  <pre><code class="language-python" id="code">
+from PIL import Image
+image = Image.open('/content/cartestimg.jpeg')
+resized_image = image.resize((32, 32))
+resized_image.save('carimage_32.jpeg')
+img = Image.open('/content/carimage_32.jpeg')            
+</code></pre>
+  <p class="para30">
+    Normalizing the image and moving it to the 'device' available.
+  </p>
+  <pre><code class="language-python" id="code">
+import torchvision.transforms as transforms
+transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.4914, 0.4822, 0.4465),          
+                                             (0.247, 0.243, 0.261))])          
+img = transform(img)
+img_sample = img.to(device)           
+</code></pre>
+  <p class="para31">
+    Specifying our classes list to print the predicted class label of the car
+    image.
+  </p>
+  <pre><code class="language-python" id="code">
+classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+#             0             1           2      3      4       5      6        7       8        9            
+</code></pre>
+  <p class="para32">
+    Predicting our car image's class with our downloaded model.
+  </p>
+  <pre><code class="language-python" id="code">
+import matplotlib.pyplot as plt
+img_sample = img_sample.view(1, 3, 32, 32).to(device)
+print(f'Input sample image size: {img_sample.shape}')
+output = model(img_sample)
+print(f'Predicted class probabilities: {output}')
+_, prediction = torch.max(output, 1)
+print(f'Predicted class index: {prediction.item()}')
+print(f'Predicted class: {classes[prediction]}')
+plt.imshow(img.cpu().permute(1, 2, 0))
+plt.show()            
+</code></pre>
+  <pre><code class="language-plaintext" id="code">
+Output:
+
+Input sample image size: torch.Size([1, 3, 32, 32])
+Predicted class probabilities: tensor([[  21.5532,  353.2068, -517.3380,  -63.4233, -910.4913,  -21.3217,
+         -205.4465,  -81.1407, -149.9409,  148.4274]],
+       grad_fn=AddmmBackward0)
+Predicted class index: 1
+Predicted class: automobile
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+</code></pre>
+  <img src="images/caroutput.png" alt="" class="img8" />
+  <p class="para33">
+    And its an automobile according to our model! That is the correct class that
+    picture belongs to. Seems like our model is doing a good job.
+  </p>
+  <br />
+  <br />
+  <div class="nextcontainer">
+    <div class="next" onclick="location.href='pytorchconvolution.html';">
+      << Back&nbsp
+    </div>
+    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    <div class="next" onclick="location.href='improvingCNN.html';">
+      &nbspNext >>
+    </div>
+  </div>
+  <br />
+  <!-- <pre><code class="language-python" id="code">
+</code></pre>
+<pre><code class="language-python" id="code">
+</code></pre>
+<pre><code class="language-python" id="code">
+</code></pre> -->
+
+  <style>
+    * {
+      margin: 0px;
+    }
+    .navcontainer .icon {
+      display: none;
+    }
+    @media screen and (max-width: 700px) {
+      /* .navbar :not(:first-child) {
+            display: none;
+          } */
+      .navcontainer .element1 {
+        font-size: 8vw;
+      }
+      .navcontainer .element2 {
+        display: none;
+      }
+      .navcontainer .element3 {
+        display: none;
+      }
+      .navcontainer .element4 {
+        display: none;
+      }
+      .navcontainer .element5 {
+        display: none;
+      }
+      .navcontainer .element6 {
+        display: none;
+      }
+      .navcontainer .icon {
+        float: none;
+        display: block;
+        text-align: left;
+      }
+    }
+    @media screen and (max-width: 860px) {
+      .img11 {
+        width: 100vw;
+      }
+    }
+    @media screen and (max-width: 600px) {
+      /* .navbar.responsive a.icon {
+            position: absolute;
+            right: 0;
+            top: 0;
+          } */
+      .navbar.responsive {
+        position: fixed;
+        height: 100vh;
+        /* box-shadow: none; */
+      }
+      .navbar.responsive a {
+        float: none;
+        display: inline-block;
+        /* text-align: left; */
+      }
+      .navbar.responsive .element2 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element3 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element4 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element5 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element6 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+    }
+    .navbar {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0%;
+      display: block;
+      background-color: purple;
+      color: white;
+      width: 100vw;
+      box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+        rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+        rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+      /* position: fixed; */
+      /* height: 10vh; */
+    }
+    .navcontainer {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0%;
+      background-color: purple;
+      width: 100vw;
+      /* position: fixed; */
+      /* height: 10vh; */
+      /* box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+            rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+            rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px; */
+      /* filter: drop-shadow(5px 0px 0px  rgb(95, 42, 42)); */
+    }
+    .element1 {
+      position: relative;
+      display: inline-block;
+      /* line-height: 6vh; */
+      vertical-align: middle;
+      font-family: "Megrim", cursive;
+      font-size: 5.2vw;
+      /* position: fixed; */
+      /* margin-top: 1vh; */
+      /* width: 20vw; */
+      /* margin-left: 7vh; */
+    }
+    .element2 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element3 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element4 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element5 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+    }
+    .element6 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .bars {
+      display: inline-block;
+      vertical-align: middle;
+      /* font-size: 2vw; */
+      /* position: fixed; */
+    }
+    /* menuicon */
+    .line1 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    .line2 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    .line3 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    /* -- */
+
+    /* CROSSANIMATION */
+    .aline1 {
+      -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+      transform: rotate(-45deg) translate(-9px, 6px);
+    }
+    .aline2 {
+      opacity: 0;
+    }
+    .aline3 {
+      -webkit-transform: rotate(45deg) translate(-6px, -5px);
+      transform: rotate(45deg) translate(-6px, -5px);
+    }
+    /* -- */
+    .home {
+      color: white;
+      text-decoration: none;
+    }
+    .a1 {
+      color: white;
+      text-decoration: none;
+    }
+    .a2 {
+      color: white;
+      text-decoration: none;
+    }
+    .a3 {
+      color: white;
+      text-decoration: none;
+    }
+    .a4 {
+      color: white;
+      text-decoration: none;
+    }
+    .a5 {
+      color: white;
+      text-decoration: none;
+    }
+    .a1:hover {
+      color: skyblue;
+    }
+    .a2:hover {
+      color: skyblue;
+    }
+    .a3:hover {
+      color: skyblue;
+    }
+    .a4:hover {
+      color: skyblue;
+    }
+    .a5:hover {
+      color: skyblue;
+    }
+    .engine {
+      display: inline-block;
+      /* width: 20vw; */
+    }
+    #code {
+      font-size: 1.8vh;
+      background-color: white;
+    }
+    #code1 {
+      font-size: 1.8vh;
+      background-color: white;
+      height: 300px;
+    }
+    #code2 {
+      font-size: 1.8vh;
+      background-color: white;
+      height: 300px;
+    }
+    #code3 {
+      font-size: 1.8vh;
+      background-color: white;
+      height: 300px;
+    }
+    #code4 {
+      font-size: 1.8vh;
+      background-color: white;
+      height: 300px;
+    }
+    #code5 {
+      font-size: 1.8vh;
+      background-color: white;
+      height: 300px;
+    }
+    #code6 {
+      font-size: 1.8vh;
+      background-color: white;
+      height: 300px;
+    }
+    .head1 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 4.2vh;
+    }
+    .head2 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head3 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head4 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head4 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head5 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head6 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head7 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head8 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .head9 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+
+    .head10 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .para1 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para2 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para3 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para4 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para5 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para6 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para7 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para8 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para9 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para10 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para11 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para12 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para13 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para14 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para15 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para16 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+
+    .para17 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para18 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para181 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para19 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para20 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para21 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para22 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para23 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para24 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para25 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para26 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para27 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para28 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para29 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para30 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para31 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para32 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para33 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para34 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para35 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para36 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para37 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para38 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para39 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para40 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .img1 {
+      width: 100vw;
+    }
+    .img2 {
+      width: 100vw;
+    }
+    .img3 {
+      width: 100vw;
+    }
+    .img4 {
+      width: 100vw;
+    }
+    .img5 {
+      width: 100vw;
+    }
+    .img6 {
+      width: 100vw;
+    }
+    .nextcontainer {
+      padding: 5px;
+      display: flex;
+      justify-content: center;
+    }
+    .next {
+      background-color: white;
+      color: purple;
+      padding: 4px;
+      font-size: 3vh;
+      font-family: "Source Code Pro", monospace;
+      cursor: pointer;
+      border: solid 3px purple;
+      border-radius: 4px;
+    }
+    .next:hover {
+      background-color: purple;
+      color: white;
+    }
+  </style>
+  <body></body>
+  <script>
+    function myFunction() {
+      var x = document.getElementById("mytopnav");
+      if (x.className === "navbar") {
+        x.className += " responsive";
+      } else {
+        x.className = "navbar";
+      }
+    }
+
+    // --
+
+    function cross() {
+      var element = document.getElementById("line1");
+      element.classList.toggle("aline1");
+      var element = document.getElementById("line2");
+      element.classList.toggle("aline2");
+      var element = document.getElementById("line3");
+      element.classList.toggle("aline3");
+    }
+  </script>
+</html>

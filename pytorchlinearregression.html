@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Linear Regression PyTorch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Megrim&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="/path/to/styles/default.css" />
+    <script src="/path/to/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <!-- -- -->
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@200&display=swap"
+      rel="stylesheet"
+    />
+    <!-- --- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet">
+    <!-- --- -->
+  </head>
+
+  <div class="navbar" id="mytopnav">
+    <div class="navcontainer">
+      &nbsp&nbsp
+      <div class="bars">
+        <a
+          href="javascript:void(0);"
+          class="icon"
+          onclick="myFunction(); cross();"
+        >
+          <div class="line1" id="line1"></div>
+          <div class="line2" id="line2"></div>
+          <div class="line3" id="line3"></div
+        ></a>
+      </div>
+      &nbsp&nbsp
+      <div class="element1">
+        <a href="index.html" class="home"><b>ML</b>harbour</a>
+      </div>
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <div class="element2"><a href="" class="a1">Learn</a></div>
+      &nbsp&nbsp
+      <div class="element3"><a href="" class="a2">Blog</a></div>
+      &nbsp&nbsp
+      <div class="element4"><a href="" class="a3">Resources</a></div>
+      &nbsp&nbsp
+      <div class="element5"><a href="" class="a4">About</a></div>
+      &nbsp&nbsp
+      <div class="element6"><a href="" class="a5">Contact</a></div>
+      <!-- <div class="engine">
+      <script async src="https://cse.google.com/cse.js?cx=38c22d203e37ec2d0"></script>
+      <div class="gcse-search"></div></div> -->
+    </div>
+  </div>
+  <div class="container1">
+    <h1 class="head1">
+      Making the same Model using a more general approach <br />(torch.nn
+      method)
+    </h1>
+    <br />
+    <p class="para1">
+      The way we created the Linear Regression in the previous tutorial, was to
+      get a basic idea of how Linear Regression works. In this tutorial you will
+      learn how to define models using the torch.nn module. <br />
+      PyTorch has these inbuilt modules which makes structuring models simpler.
+      All the calculations are done automatically by these modules, unlike we
+      specified ourlinear equation y = w * x + b and updates the weights at each
+      epoch, in our previous model. All of the time, (mostly) we going to to use
+      torch.nn and its components to build our own custom neural networks, so it
+      is necessary to understand how it works and how implement it in code.
+    </p>
+    <br />
+    <center>
+      <a
+        href="https://colab.research.google.com/drive/1bfrBWolC9f-TuM3OuFsYUhMA6cUs2p2Q?usp=sharing"
+        target="blank"
+      >
+        <img
+          class="img1"
+          src="https://colab.research.google.com/assets/colab-badge.svg"
+          alt="Open In Colab"
+          height="35px"
+        />
+      </a>
+    </center>
+    <br />
+    <p class="para2">
+      <b>[1]</b>&nbsp Import torch module<br />
+      <b>[2]</b>&nbsp Importing torch.nn as nn, wherever we write nn, it
+      signifies torch.nn, torch.nn contains all the submodules to define a
+      neural network explicitly.<br />
+      <b>[3]</b>&nbsp Defining the values of the Tensors x and y by
+      torch.tensor([data]), now a difference from earlier is the . (decimal)
+      after each data sample in x and y, it means that we converted the datatype
+      of x and y to float, for example 1 to 1.0, Floats are just numbers with a
+      decimal. Now the question Why? Because our data should be of the datatype
+      float as only float data requires Gradient as a rule. <br />
+      <b>[4]</b>&nbsp Creating a class named model with a base class nn.Module
+      (torch.nn.Module) <br />
+      <b>[5]</b>&nbsp Creating a function inside our model class, which takes
+      self as input, using the __init__ method which allows us to use attributes
+      of Self, like (Self.Linear) <br />
+      <b>[6]</b>&nbsp Now we use the super function to access
+      torch.nn.Module.Linear from our Parent Class model() <br />
+      <b>[7]</b>&nbsp nn.Linear Layer computes the output by using the formula
+      we used earlier, y = w * x + b , y being the output and x the output ans
+      w,b being the weights and biases respectively.<br />
+      <b>[8]</b>&nbsp Creating a forward pass function to pass the value of the
+      input in the model <br />
+      <b>[9]</b>&nbsp Objectifying the output given by the model as prediction
+      <br />
+      <b>[10]</b>&nbsp This function returns the value of the Output. <br />
+      <b>[11]</b>&nbsp Objectifying our model as model. <br />
+      <b>[12]</b>&nbsp Defining the MSE Loss by using torch.nn.Module, which
+      automatically calcaulates the Mean Squared error using the formula we
+      discussed earlier. <br />
+      <b>[13]</b>&nbsp Now yes, the Showman, The Optimizer, the optimizer we use
+      here is SGD (Stochastic Gradient Descent), SGD does Automatic Gradient
+      Calculation by taking random Samples from the data and optimizes the
+      parameters(weights and biases) at each iteration, Stochastic hereby stands
+      for random. Here we set the learning rate(lr) to 0.01<br />
+      <b>[14]</b>&nbsp Creating the Training Loop for 1000 epochs <br />
+      <b>[15]</b>&nbsp Objectifying the value guessed by our model as
+      y_predicted
+      <br />
+      <b>[16]</b>&nbsp Calling the loss function we defined on the Predicted and
+      Actual Values. <br />
+      <b>[17]</b>&nbsp Resetting the gradients to zero <br />
+      <b>[18]</b>&nbsp Calling the loss.backward() function to compute the
+      Gradient at every epoch <br />
+      <b>[19]</b>&nbsp optimizer.step() updates the Gradient, changing the
+      values of weights and biases to reduce the loss <br />
+      <b>[20]</b>&nbsp Printing the Value of loss and predicted value of y by
+      our model at every epoch <br />
+    </p>
+    <br />
+    <pre><code class="language-python" id="code">
+import torch                                                                    #1
+import torch.nn as nn                                                           #2
+
+x = torch.tensor([[1.], [2.], [3.], [4.], [5.]], requires_grad = True)          #3
+y = torch.tensor([[9.], [10.], [11.], [12.], [13.]], requires_grad = True)      #3
+
+class model(nn.Module):                                                         #4    
+  
+  def __init__(self):                                                           #5
+    super(model, self).__init__()                                               #6
+    self.linear = torch.nn.Linear(1, 1)                                         #7
+
+  def forward(self, x):                                                         #8
+    prediction = self.linear(x)                                                 #9
+    return prediction                                                           #10
+
+model = model()                                                                 #11
+criterion = torch.nn.MSELoss()                                                  #12
+optimizer = torch.optim.SGD(model.parameters(), lr = 0.01)                      #13
+
+for epoch in range(1000):                                                       #14
+  y_predicted = model(x)                                                        #15
+  loss = criterion(y_predicted, y)                                              #16
+  optimizer.zero_grad()                                                         #17
+  loss.backward()                                                               #18
+  optimizer.step()                                                              #19
+  print(f"Epoch {epoch}/{100}: Loss: {loss} pred: {y_predicted}")               #20
+</code></pre>
+    <br />
+
+    <pre><code class="language-plaintext" id="code">
+Output:   Epoch 999/1000: Loss: 0.011892559938132763 
+          pred: tensor([[ 8.8152],
+          [ 9.8860],
+          [10.9568],
+          [12.0276],
+          [13.0984]], grad_fn=AddmmBackward0)
+</code></pre>
+    <p class="para3">
+      Now that you know how to build a model using <b>torch.nn</b>, let's level
+      things up and build a image classification model in the next tutorial.
+    </p>
+    <br />
+    <br />
+    <br />
+    <div class="nextcontainer">
+      <div class="next" onclick="location.href='pytorchbasics.html';">
+        << Back&nbsp
+      </div>
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <div class="next" onclick="location.href='pytorchconvolution.html';">
+        &nbspNext >>
+      </div>
+    </div>
+  </div>
+  <br />
+  <style>
+    * {
+      margin: 0px;
+    }
+    .navcontainer .icon {
+      display: none;
+    }
+    @media screen and (max-width: 700px) {
+      /* .navbar :not(:first-child) {
+            display: none;
+          } */
+      .navcontainer .element1 {
+        font-size: 8vw;
+      }
+      .navcontainer .element2 {
+        display: none;
+      }
+      .navcontainer .element3 {
+        display: none;
+      }
+      .navcontainer .element4 {
+        display: none;
+      }
+      .navcontainer .element5 {
+        display: none;
+      }
+      .navcontainer .element6 {
+        display: none;
+      }
+      .navcontainer .icon {
+        float: none;
+        display: block;
+        text-align: left;
+      }
+    }
+    @media screen and (max-width: 700px) {
+      /* .navbar.responsive a.icon {
+            position: absolute;
+            right: 0;
+            top: 0;
+          } */
+      .navbar.responsive {
+        position: fixed;
+        height: 100vh;
+        /* box-shadow: none; */
+      }
+      .navbar.responsive a {
+        float: none;
+        display: inline-block;
+        /* text-align: left; */
+      }
+      .navbar.responsive .element2 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element3 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element4 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element5 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element6 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+    }
+    .navbar {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0%;
+      display: block;
+      background-color: purple;
+      color: white;
+      width: 100vw;
+      box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+        rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+        rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+      /* position: fixed; */
+      /* height: 10vh; */
+    }
+    .navcontainer {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0%;
+      background-color: purple;
+      width: 100vw;
+      /* position: fixed; */
+      /* height: 10vh; */
+      /* box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+            rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+            rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px; */
+      /* filter: drop-shadow(5px 0px 0px  rgb(95, 42, 42)); */
+    }
+    .element1 {
+      position: relative;
+      display: inline-block;
+      /* line-height: 6vh; */
+      vertical-align: middle;
+      font-family: "Megrim", cursive;
+      font-size: 5.2vw;
+      /* position: fixed; */
+      /* margin-top: 1vh; */
+      /* width: 20vw; */
+      /* margin-left: 7vh; */
+    }
+    .element2 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element3 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element4 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element5 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+    }
+    .element6 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .bars {
+      display: inline-block;
+      vertical-align: middle;
+      /* font-size: 2vw; */
+      /* position: fixed; */
+    }
+    /* menuicon */
+    .line1 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    .line2 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    .line3 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    /* -- */
+
+    /* CROSSANIMATION */
+    .aline1 {
+      -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+      transform: rotate(-45deg) translate(-9px, 6px);
+    }
+    .aline2 {
+      opacity: 0;
+    }
+    .aline3 {
+      -webkit-transform: rotate(45deg) translate(-6px, -5px);
+      transform: rotate(45deg) translate(-6px, -5px);
+    }
+    /* -- */
+    .home {
+      color: white;
+      text-decoration: none;
+    }
+    .a1 {
+      color: white;
+      text-decoration: none;
+    }
+    .a2 {
+      color: white;
+      text-decoration: none;
+    }
+    .a3 {
+      color: white;
+      text-decoration: none;
+    }
+    .a4 {
+      color: white;
+      text-decoration: none;
+    }
+    .a5 {
+      color: white;
+      text-decoration: none;
+    }
+    .a1:hover {
+      color: skyblue;
+    }
+    .a2:hover {
+      color: skyblue;
+    }
+    .a3:hover {
+      color: skyblue;
+    }
+    .a4:hover {
+      color: skyblue;
+    }
+    .a5:hover {
+      color: skyblue;
+    }
+    .engine {
+      display: inline-block;
+      width: 20vw;
+    }
+    #code {
+      font-size: 1.8vh;
+      background-color: white;
+    }
+    .container1 {
+      background-color: white;
+    }
+    .head1 {
+      font-size: 5vh;
+      padding-left: 5px;
+      padding-top: 5px;
+      font-family: "Alegreya Sans SC", sans-serif;
+      line-height: 3.8vh;
+    }
+    .para1 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para2 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .para3 {
+      font-size: 2.7vh;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-family: "Fira Sans", sans-serif;
+    }
+    .nextcontainer {
+      padding: 5px;
+      display: flex;
+      justify-content: center;
+    }
+    .next {
+      background-color: white;
+      color: purple;
+      padding: 4px;
+      font-size: 3vh;
+      font-family: "Source Code Pro", monospace;
+      cursor: pointer;
+      border: solid 3px purple;
+      border-radius: 4px;
+    }
+    .next:hover {
+      background-color: purple;
+      color: white;
+    }
+  </style>
+  <body></body>
+  <script>
+    function myFunction() {
+      var x = document.getElementById("mytopnav");
+      if (x.className === "navbar") {
+        x.className += " responsive";
+      } else {
+        x.className = "navbar";
+      }
+    }
+
+    // --
+
+    function cross() {
+      var element = document.getElementById("line1");
+      element.classList.toggle("aline1");
+      var element = document.getElementById("line2");
+      element.classList.toggle("aline2");
+      var element = document.getElementById("line3");
+      element.classList.toggle("aline3");
+    }
+  </script>
+</html>

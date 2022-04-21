@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHANGE NAME</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Megrim&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <!-- -- -->
+    <link
+    rel="stylesheet"
+    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css"
+  />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+  <link rel="stylesheet" href="/path/to/styles/default.css" />
+  <script src="/path/to/highlight.min.js"></script>
+  <script>
+    hljs.highlightAll();
+  </script>
+  <!-- -- -->
+
+</head>
+  </head>
+  <div class="navbar" id="mytopnav">
+    <div class="navcontainer">
+      &nbsp&nbsp
+      <div class="bars">
+        <a
+          href="javascript:void(0);"
+          class="icon"
+          onclick="myFunction(); cross();"
+        >
+          <div class="line1" id="line1"></div>
+          <div class="line2" id="line2"></div>
+          <div class="line3" id="line3"></div
+        ></a>
+      </div>
+      &nbsp&nbsp
+      <div class="element1">
+        <a href="index.html" class="home"><b>ML</b>harbour</a>
+      </div>
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <div class="element2"><a href="" class="a1">Learn</a></div>
+      &nbsp&nbsp
+      <div class="element3"><a href="" class="a2">Blog</a></div>
+      &nbsp&nbsp
+      <div class="element4"><a href="" class="a3">Resources</a></div>
+      &nbsp&nbsp
+      <div class="element5"><a href="" class="a4">About</a></div>
+      &nbsp&nbsp
+      <div class="element6"><a href="" class="a5">Contact</a></div>
+      <!-- <div class="engine">
+      <script async src="https://cse.google.com/cse.js?cx=38c22d203e37ec2d0"></script>
+      <div class="gcse-search"></div></div> -->
+    </div>
+  </div>
+  <style>
+    * {
+      margin: 0px;
+    }
+    .navcontainer .icon {
+      display: none;
+    }
+    @media screen and (max-width: 700px) {
+      /* .navbar :not(:first-child) {
+            display: none;
+          } */
+      .navcontainer .element1 {
+        font-size: 8vw;
+      }
+      .navcontainer .element2 {
+        display: none;
+      }
+      .navcontainer .element3 {
+        display: none;
+      }
+      .navcontainer .element4 {
+        display: none;
+      }
+      .navcontainer .element5 {
+        display: none;
+      }
+      .navcontainer .element6 {
+        display: none;
+      }
+      .navcontainer .icon {
+        float: none;
+        display: block;
+        text-align: left;
+      }
+    }
+    @media screen and (max-width: 600px) {
+      /* .navbar.responsive a.icon {
+            position: absolute;
+            right: 0;
+            top: 0;
+          } */
+      .navbar.responsive {
+        position: fixed;
+        height: 100vh;
+        /* box-shadow: none; */
+      }
+      .navbar.responsive a {
+        float: none;
+        display: inline-block;
+        /* text-align: left; */
+      }
+      .navbar.responsive .element2 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element3 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element4 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element5 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+      .navbar.responsive .element6 {
+        margin-left: 5px;
+        font-size: 3vh;
+        float: none;
+        display: block;
+        text-align: left;
+      }
+    }
+    .navbar {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0%;
+      display: block;
+      background-color: purple;
+      color: white;
+      width: 100vw;
+      box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+        rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+        rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+      /* position: fixed; */
+      /* height: 10vh; */
+    }
+    .navcontainer {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0%;
+      background-color: purple;
+      width: 100vw;
+      /* position: fixed; */
+      /* height: 10vh; */
+      /* box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px,
+            rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px,
+            rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px; */
+      /* filter: drop-shadow(5px 0px 0px  rgb(95, 42, 42)); */
+    }
+    .element1 {
+      position: relative;
+      display: inline-block;
+      /* line-height: 6vh; */
+      vertical-align: middle;
+      font-family: "Megrim", cursive;
+      font-size: 5.2vw;
+      /* position: fixed; */
+      /* margin-top: 1vh; */
+      /* width: 20vw; */
+      /* margin-left: 7vh; */
+    }
+    .element2 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element3 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element4 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .element5 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+    }
+    .element6 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 2vw;
+      font-family: "Quicksand", sans-serif;
+      /* position: fixed; */
+      /* line-height: 10vh; */
+    }
+    .bars {
+      display: inline-block;
+      vertical-align: middle;
+      /* font-size: 2vw; */
+      /* position: fixed; */
+    }
+    /* menuicon */
+    .line1 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    .line2 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    .line3 {
+      background-color: skyblue;
+      height: 3px;
+      width: 30px;
+      margin: 6px;
+    }
+    /* -- */
+
+    /* CROSSANIMATION */
+    .aline1 {
+      -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+      transform: rotate(-45deg) translate(-9px, 6px);
+    }
+    .aline2 {
+      opacity: 0;
+    }
+    .aline3 {
+      -webkit-transform: rotate(45deg) translate(-6px, -5px);
+      transform: rotate(45deg) translate(-6px, -5px);
+    }
+    /* -- */
+    .home {
+      color: white;
+      text-decoration: none;
+    }
+    .a1 {
+      color: white;
+      text-decoration: none;
+    }
+    .a2 {
+      color: white;
+      text-decoration: none;
+    }
+    .a3 {
+      color: white;
+      text-decoration: none;
+    }
+    .a4 {
+      color: white;
+      text-decoration: none;
+    }
+    .a5 {
+      color: white;
+      text-decoration: none;
+    }
+    .a1:hover {
+      color: skyblue;
+    }
+    .a2:hover {
+      color: skyblue;
+    }
+    .a3:hover {
+      color: skyblue;
+    }
+    .a4:hover {
+      color: skyblue;
+    }
+    .a5:hover {
+      color: skyblue;
+    }
+    .engine {
+      display: inline-block;
+      /* width: 20vw; */
+    }
+    </style>
+<body>
+    
+</body>
+<script>
+  function myFunction() {
+    var x = document.getElementById("mytopnav");
+    if (x.className === "navbar") {
+      x.className += " responsive";
+    } else {
+      x.className = "navbar";
+    }
+  }
+
+  // --
+
+  function cross() {
+    var element = document.getElementById("line1");
+    element.classList.toggle("aline1");
+    var element = document.getElementById("line2");
+    element.classList.toggle("aline2");
+    var element = document.getElementById("line3");
+    element.classList.toggle("aline3");
+  }
+</script>
+</html>
